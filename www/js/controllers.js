@@ -1736,9 +1736,11 @@ $scope.mostra_anuncio = function() {
 
   $scope.compartilha = function(titulo,descricao,foto, preco){
 
+     var mensagem =   titulo +" - " +descricao;
+
 
      $cordovaSocialSharing
-      .share(descricao, titulo, foto, preco)
+      .share(mensagem, titulo, foto, "Preço R$ "+ preco)
       .then(function(result) {
 
       }, function(err) {
