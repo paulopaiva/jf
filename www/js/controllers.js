@@ -51,9 +51,10 @@ if (start==0) {
     $scope.localizacao="";
     $scope.osb="";
     $scope.img_fundo="url(ico/papel1.jpeg)";
-    $scope.tema="bar-positive";
-    $scope.tab_tema="tabs-background-positive tabs-color-light";
-    $scope.btn_tema="button-positive";
+    $scope.tema="bar-royal";
+    $scope.tab_tema="tabs-background-royal tabs-color-light";
+    $scope.btn_tema="button-energized";
+  //  $scope.btn_tema="background: #536DFE;color: #fff;";
 
   if (localStorage.getItem('nome')!=null){
     idUsuario= localStorage.getItem('idusuario');
@@ -122,6 +123,42 @@ $scope.verificaNet = function(){
 
    }
 }
+
+
+$scope.verAnuncio = function(index) {
+
+  $scope.index=index;
+  $scope.classificado.nome= $scope.listaClassificado[index].nome;
+  $scope.classificado.telefone= $scope.listaClassificado[index].telefone;
+  $scope.classificado.bairro= $scope.listaClassificado[index].bairro;
+  $scope.classificado.categoria= $scope.listaClassificado[index].categoria;
+  $scope.classificado.titulo= $scope.listaClassificado[index].titulo;
+  $scope.classificado.data_hora= $scope.listaClassificado[index].data_hora;
+  $scope.classificado.preco= $scope.listaClassificado[index].preco;
+  $scope.classificado.foto= $scope.listaClassificado[index].foto;
+  $scope.classificado.descricao= $scope.listaClassificado[index].descricao;
+  $scope.mostra_anuncio();
+
+};
+
+$scope.comentarNotificacao = function(idmensagem, qtd, index) {
+  $scope.idmensagem=idmensagem;
+  $scope.qtdComentario=qtd;
+  $scope.index=index;
+  $scope.video= $scope.listaNotificacao[index].video;
+  $scope.foto=$scope.listaNotificacao[index].foto;
+  $scope.descricao=$scope.listaNotificacao[index].descricao;
+  $scope.data_hora=$scope.listaNotificacao[index].data_hora;
+  $scope.endereco=$scope.listaNotificacao[index].endereco;
+  $scope.assunto=$scope.listaNotificacao[index].assunto;
+  $scope.curtir=$scope.listaNotificacao[index].curtir;
+  $scope.comentario=$scope.listaNotificacao[index].comentario;
+  $scope.compartilhamento=$scope.listaNotificacao[index].compartilhamento;
+ // $scope.listaNotificacao[index].status_label='{"background":"#F4FFF9"}';
+  $scope.pegaComentario();
+  $scope.modalcomentar.show();
+};
+
 
 
 //  colaborador
@@ -580,7 +617,9 @@ $ionicLoading.hide();
 
 }
 
+
 $scope.mostraFoto = function(foto,titulo) {
+
   if (foto!=""){
    var alertPopup = $ionicPopup.alert({
      title: titulo,
@@ -1229,6 +1268,22 @@ $http({
  }
 }
 
+$scope.limpaAnuncio = function(){
+
+$scope.classificado.titulo="";
+$scope.classificado.descricao="";
+$scope.classificado.categoria="";
+$scope.classificado.preco="";
+$scope.classificado.localizacao="";
+$scope.classificado.latitude="";
+$scope.classificado.longitude="";
+$scope.classificado.data_hora="";
+$scope.foto_file_path="";
+$scope.bairro="";
+$scope.classificado.foto="images/foto.jpg";
+$scope.classefoto="foto-avatar";
+}
+
 $scope.gravarAnuncio = function(dados){
 if (idUsuario!=""){
 var today = new Date();
@@ -1255,7 +1310,7 @@ var valores = {
 
 }
 
-console.log(valores)
+
 
 $http({
       method:'POST',
@@ -1268,13 +1323,10 @@ $http({
        $scope.classificado = {};
 //      $scope.showAlert('Informação','Sua mensagem foi enviada com sucesso!')
        $scope.closecad_classificado();
-//       $scope.limparDados();
-       $scope.foto_file_path="";
-       $scope.video_file_path="";
-       $scope.classificado.foto="images/foto.jpg";
-       $scope.lista=[];
+       $scope.limpaAnuncio();
+//       $scope.listaClassificado=[];
+//       $scope.pegaClassificado();
 
-       $scope.pegaStatus();
        $scope.showAlert('Informação','Seu anúncio em breve estará publicado, agurade.');
 
     }).error(function(data){
@@ -1359,8 +1411,8 @@ $scope.carregarFoto = function(opc){
       sourceType: opc,
       allowEdit: true,
       encodingType: Camera.EncodingType.JPEG,
-  //    targetWidth: 1024,
-  //    targetHeight: 1024,
+      targetWidth: 320,
+      targetHeight: 320,
       saveToPhotoAlbum: true,
       correctOrientation:true
     };
@@ -1521,6 +1573,21 @@ $scope.cad_classificado = function() {
   $scope.pegaLocal();
 };
 
+$ionicModal.fromTemplateUrl('templates/tab-anuncio.html', {
+  scope: $scope
+}).then(function(anuncio) {
+  $scope.menuAnuncio = anuncio;
+});
+
+// Triggered in the login modal to close it
+$scope.close_anuncio = function() {
+  $scope.menuAnuncio.hide();
+};
+// Open the login modal
+$scope.mostra_anuncio = function() {
+  $scope.menuAnuncio.show();
+
+};
 
 
   $ionicModal.fromTemplateUrl('templates/menu-msg.html', {
@@ -1666,6 +1733,24 @@ $scope.cad_classificado = function() {
     $scope.pegaComentario();
     $scope.modalcomentar.show();
   };
+
+  $scope.compartilha = function(titulo,descricao,foto, preco){
+
+
+     $cordovaSocialSharing
+      .share(descricao, titulo, foto, preco)
+      .then(function(result) {
+
+      }, function(err) {
+        // An error occured. Show a message to the user
+      });
+
+
+  }
+
+
+
+
 
   $scope.comentarNotificacao = function(idmensagem, qtd, index) {
     $scope.idmensagem=idmensagem;

@@ -1,15 +1,15 @@
 
 <ion-tabs class="tabs-striped tabs-top bar_blue {{tab_tema}} menuTab " ng-controller="StatusCtrl">
 
-    <ion-tab title="classificado"  icon-off="ion-speakerphone" icon-on="ion-speakerphone"  href="#/tab/classificado" on-select="pegaClassificado()">
+    <ion-tab title="classificado"  icon-off="ion-ios-paper" icon-on="ion-ios-paper"  href="#/tab/classificado" on-select="pegaClassificado()">
        <ion-nav-view name="tab-classificado"></ion-nav-view>
     </ion-tab>
 
-   <ion-tab title="Mapa" icon-off="ion-location" icon-on="ion-location" href="#/tab/mapa" on-select="carregaMapa()" >
+   <ion-tab title="Mapa" icon-off="ion-happy" icon-on="ion-happy" href="#/tab/mapa" on-select="carregaMapa()" >
      <ion-nav-view name="tab-mapa"></ion-nav-view>
    </ion-tab>
 
-   <ion-tab title="Mensagens" icon-off="ion-android-contact" icon-on="ion-android-contact"  href="#/tab/msg"  on-select="pegaStatusUsuario()">
+   <ion-tab title="Mensagens" icon-off="ion-ios-cart" icon-on="ion-ios-cart"  href="#/tab/msg"  on-select="pegaStatusUsuario()">
      <ion-nav-view name="tab-msg"></ion-nav-view>
    </ion-tab>
 <!--
@@ -17,25 +17,7 @@
      <ion-nav-view name="tab-ponto"></ion-nav-view>
    </ion-tab>
 -->
-    <ion-tab ng-if="tipo != 'Residencial'" title="Coleta" icon-off="ion-android-bus" icon-on="ion-android-bus"  href="#/tab/patio" on-select="pegaColeta()" >
-      <ion-nav-view name="tab-patio"></ion-nav-view>
-    </ion-tab>
-
-
-
   <!--
-  <ion-tab title="Vídeos" icon-off="ion-speakerphone" icon-on="ion-speakerphone" href="#/tab/video" on-select="pegaVideo()">
-    <ion-nav-view name="tab-video"></ion-nav-view>
-  </ion-tab>
-
-  -->
-
-
-
-<ion-tab title="Multas" icon-off="ion-document-text" icon-on="ion-document-text" href="#/tab/multa" on-select="pegaStatusColaborador()">
-  <ion-nav-view name="tab-multa"></ion-nav-view>
-</ion-tab>
-<!--
   <ion-tab title="Agendamento" icon-off="ion-ios-paper" icon-on="ion-ios-paper" href="#/tab/agendamento" on-select="pegaAgendamento()">
     <ion-nav-view name="tab-agendamento"></ion-nav-view>
   </ion-tab>

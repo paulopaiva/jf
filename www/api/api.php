@@ -248,7 +248,9 @@ if($filter === 'POST'){
        case "pegaClassificado":
              $read = new Read;
              //$read->ExeRead('user');
-             $read->FullRead("SELECT * from classificado ORDER BY classificado.idclassificado desc LIMIT {$data->pagina},30");             echo json_encode($read->getResult());
+             $read->FullRead("SELECT classificado.*,usuario.nome, usuario.telefone FROM classificado INNER JOIN usuario ON classificado.idusuario =".
+                             "usuario.idusuario ORDER BY classificado.idclassificado desc LIMIT {$data->pagina},30");
+             echo json_encode($read->getResult());
         break;
 
 

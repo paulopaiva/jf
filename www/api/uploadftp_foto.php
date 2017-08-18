@@ -5,7 +5,7 @@ if( $_SERVER['REQUEST_METHOD']=='POST' )
 
 
         $servidor = 'www.portalexata.com.br';
-        $caminho_absoluto = '/cartaofelicidade.com.br/app/foto/';
+        $caminho_absoluto = '/public_html/cartaofelicidade.com.br/app/foto/';
         $arquivo = $_FILES['file'];
 
         $con_id = ftp_connect($servidor) or die( 'Não conectou em: '.$servidor );

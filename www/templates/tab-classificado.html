@@ -13,29 +13,15 @@
   </label>
 </div>
 
-
-
-
-
-
-
-
 <div  class="list" ng-repeat="pega in listaClassificado | filter:criterioDeBusca" cache-view="false">
-<div class="card">
-  <a class="item item-thumbnail-left" href="#">
-     <img  src="{{pega.foto}}" ng-show="{{pega.foto}}"
-
-
-    <h3><p style="color:black">{{pega.titulo}}</p></h3>
-
-
-    <h2><p style="color:black">R${{pega.preco}}</p></h2>
-
-    <span class="input-label" style="font-size: 10px; font-weight: bold; color:darkgray;">{{pega.data_hora | date:'medium' }} - {{pega.bairro }}</span>
-  <!--    <span class="input-label" style="font-size: 10px; font-weight: bold; color:darkgray;">{{pega.bairro }}</span>
--->
+<!-- <img class="full-image" src="images/play-in.png" ng-click="mostraVideo($index)" ng-show="{{pega.video}}"> ng-click="mostraFoto(pega.foto,pega.titulo)" -->
+  <a class="item item-thumbnail-left" ng-click="verAnuncio($index)">
+     <img  src="{{pega.foto}}" ng-show="{{pega.foto}}" > </img>
+     <h3><p style="color:black">{{pega.titulo}}</p></h3>
+     <h2><p style="color:black">R${{pega.preco}}</p></h2>
+     <span class="input-label" style="font-size: 10px; font-weight: bold; color:darkgray;">{{pega.data_hora | date:'medium' }} - {{pega.bairro }}</span>
   </a>
- </div>
+
  </div>
 <!-- <img class="full-image" src="images/play-in.png" ng-click="mostraVideo($index)" ng-show="{{pega.video}}"> -->
 <!--   <video id="VideoPlay" controls loop ng-show="{{pega.video}}"><source src="{{pega.video}}" type="video/mp4"/></video>
