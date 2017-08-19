@@ -114,7 +114,7 @@ document.addEventListener('deviceready',function(){ // inicia o aplicativo
     //      alert('2.1')
            sessionStorage.setItem('secao',true);
            idUsuario=localStorage.getItem('idusuario');
-           $scope.idusuario=idUsuario
+           $scope.idusuario=idUsuario;
            $cordovaStatusbar.show();
         }
         if (!localStorage.getItem('nome')){
