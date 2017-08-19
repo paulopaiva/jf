@@ -1,5 +1,16 @@
 angular.module('starter.controllers', [])
-.controller('StatusCtrl', function($scope, $cordovaCapture, $cordovaStatusbar,  $state, $cordovaNetwork,  $cordovaGeolocation, $cordovaToast, $http, Conexao, $cordovaContacts, $cordovaSocialSharing, $ionicModal, $cordovaCamera, $ionicLoading, $cordovaFileTransfer,  $timeout, $ionicPopup)  {
+.controller('StatusCtrl', function($scope,  $cordovaStatusbar, $cordovaCapture, $cordovaStatusbar,  $state, $cordovaNetwork,  $cordovaGeolocation, $cordovaToast, $http, Conexao, $cordovaContacts, $cordovaSocialSharing, $ionicModal, $cordovaCamera, $ionicLoading, $cordovaFileTransfer,  $timeout, $ionicPopup)  {
+
+
+    $cordovaStatusbar.overlaysWebView(true);
+    // styles: Default : 0, LightContent: 1, BlackTranslucent: 2, BlackOpaque: 3
+    $cordovaStatusbar.style(1);
+    // supported names: black, darkGray, lightGray, white, gray, red, green,
+    // blue, cyan, yellow, magenta, orange, purple, brown
+    $cordovaStatusbar.styleHex('#8F28AF');
+  //  $cordovaStatusbar.hide();
+    $cordovaStatusbar.show();
+//    var isVisible = $cordovaStatusbar.isVisible();
 
 if (start==0) {
     $scope.classificado ={};
