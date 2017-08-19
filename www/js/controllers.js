@@ -451,6 +451,20 @@ var valores = {
         });
 };
 
+$scope.pegaLojista = function(){
+var valores = {
+  parametros:'pegaLojista',
+  pagina:0
+}
+    $http({
+          method:'POST',
+          url: path+'api/api.php',
+          data: valores,
+          headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+        }).success(function(data){
+          $scope.listaLojista = data;
+        });
+};
 
 
 
@@ -1573,6 +1587,24 @@ $scope.cad_classificado = function() {
   $scope.pegaCategoria();
   $scope.pegaLocal();
 };
+
+/**
+
+$ionicModal.fromTemplateUrl('templates/tab-lojista.html', {
+  scope: $scope
+}).then(function(lojista) {
+  $scope.tablojista = lojista;
+});
+
+// Triggered in the login modal to close it
+$scope.close_Lojista = function() {
+  $scope.tabLojista.hide();
+};
+// Open the login modal
+$scope.tab_Lojista = function() {
+  $scope.tabLojista.show();
+};
+**/
 
 $ionicModal.fromTemplateUrl('templates/tab-anuncio.html', {
   scope: $scope

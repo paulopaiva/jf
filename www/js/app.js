@@ -182,11 +182,11 @@ angular.module('starter', ['ionic', 'starter.controllers','ngCordova'])
       }
     }
   })
-  .state('tab.proposta', {
-      url: '/proposta',
+  .state('tab.lojista', {
+      url: '/lojista',
       views: {
-        'tab-proposta': {
-          templateUrl: 'templates/tab-proposta.html',
+        'tab-lojista': {
+          templateUrl: 'templates/tab-lojista.html',
           controller: 'StatusCtrl'
         }
       }
