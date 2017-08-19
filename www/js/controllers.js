@@ -65,6 +65,7 @@ if (start==0) {
     $scope.tema="bar-royal";
     $scope.tab_tema="tabs-background-royal tabs-color-light";
     $scope.btn_tema="button-energized";
+    $scope.usuario.foto_perfil="images/foto.jpg";
   //  $scope.btn_tema="background: #536DFE;color: #fff;";
 
   if (localStorage.getItem('nome')!=null){
@@ -86,6 +87,11 @@ if (start==0) {
 /// inicio da funcao maoa'
 
 document.addEventListener('deviceready',function(){ // inicia o aplicativo
+  $cordovaStatusbar.style(2);
+
+  // supported names: black, darkGray, lightGray, white, gray, red, green,
+  // blue, cyan, yellow, magenta, orange, purple, brown
+   $cordovaStatusbar.styleHex('#8F28AF');
 
     if (start2==0){
         start2=1;
@@ -1562,6 +1568,7 @@ $scope.closecad_classificado = function() {
 };
 // Open the login modal
 $scope.cad_classificado = function() {
+  $scope.limpaAnuncio();
   $scope.menuClassificado.show();
   $scope.pegaCategoria();
   $scope.pegaLocal();
