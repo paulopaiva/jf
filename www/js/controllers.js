@@ -87,26 +87,6 @@ if (start==0) {
 
 document.addEventListener('deviceready',function(){ // inicia o aplicativo
 
- // alert ('O evento é acionado quando Cordova está totalmente carregada.')
-
-//$cordovaStatusbar.overlaysWebView(true);
-//
-  // styles: Default : 0, LightContent: 1, BlackTranslucent: 2, BlackOpaque: 3
-  $cordovaStatusbar.style(2);
-
-  // supported names: black, darkGray, lightGray, white, gray, red, green,
-  // blue, cyan, yellow, magenta, orange, purple, brown
-  $cordovaStatusbar.styleColor('blue');
-//  $cordovaStatusbar.backgroundColorByName("red");
-
- // alert ('teste')
- // $cordovaStatusbar.styleHex('#000');
-
-// $cordovaStatusbar.hide();
-
-  $cordovaStatusbar.show();
-//console.log($cordovaStatusbar);
-
     if (start2==0){
         start2=1;
         $scope.secao=sessionStorage.getItem('secao');
@@ -115,11 +95,11 @@ document.addEventListener('deviceready',function(){ // inicia o aplicativo
            sessionStorage.setItem('secao',true);
            idUsuario=localStorage.getItem('idusuario');
            $scope.idusuario=idUsuario;
-           $cordovaStatusbar.show();
+
         }
         if (!localStorage.getItem('nome')){
           localStorage.setItem('contador',1);
-          $cordovaStatusbar.show();
+
           $scope.usuario();
 
 
