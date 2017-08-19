@@ -104,7 +104,7 @@ document.addEventListener('deviceready',function(){ // inicia o aplicativo
 
 // $cordovaStatusbar.hide();
 
-//  $cordovaStatusbar.show();
+  $cordovaStatusbar.show();
 //console.log($cordovaStatusbar);
 
     if (start2==0){
