@@ -300,28 +300,6 @@ $ionicLoading.hide();
 }
 
 
-$scope.perfilPopup = function (){
-    var confirm = $ionicPopup.alert({
-      title: "Origem da Foto",
-      body: " <i class='ion-camera'>Selecione o dispositivo</i>",
-      buttons: [{text: "Camêra",
-                 type: 'button-positive',
-                  onTap: function (){
-                    $scope.carregarFotoPerfil(1);
-                  },
-
-               },{text: "Galeria",
-                  type: 'button-positive',
-                  onTap: function (){
-                    $scope.carregarFotoPerfil(2);
-                  }
-
-
-             }]
-    });
-
-};
-
 
 $scope.cameraPopup = function (){
     var confirm = $ionicPopup.alert({
@@ -813,7 +791,7 @@ $scope.gravaUsuario = function(usuario){
     }}
 
   //  //console.log(path+'api/api.php');
-
+  console.log(valores);
 
     $http({
           method:'POST',
@@ -834,7 +812,7 @@ $scope.gravaUsuario = function(usuario){
             localStorage.setItem('telefone', usuario.telefone);
             localStorage.setItem('rg', usuario.rg);
             localStorage.setItem('data_nascimento', usuario.data_nascimento);
-            localStorage.setItem('foto', usuario.foto_perfil);
+            localStorage.setItem('foto_perfil', usuario.foto_perfil);
 
             $ionicLoading.hide();
 
@@ -1449,30 +1427,32 @@ $scope.carregarFoto = function(opc){
 
 $scope.carregarFotoPerfil = function(opc){
 
-    var options = {
-      quality: 50,
-      destinationType: Camera.DestinationType.DATA_URI,
-      sourceType: opc,
-      allowEdit: true,
-      encodingType: Camera.EncodingType.JPEG,
-  //    targetWidth: 1024,
-  //    targetHeight: 1024,
-      saveToPhotoAlbum: true,
-      correctOrientation:true
-    };
+      var options = {
+        quality: 70,
+        destinationType: Camera.DestinationType.DATA_URI,
+        sourceType: opc,
+        allowEdit: true,
+        encodingType: Camera.EncodingType.JPEG,
+        targetWidth: 320,
+        targetHeight: 320,
+        saveToPhotoAlbum: true,
+        correctOrientation:true
+      };
 
-    $cordovaCamera.getPicture(options).then(function(imageData) {
+      $cordovaCamera.getPicture(options).then(function(imageData) {
 
-     $scope.foto_perfil  =  imageData;
-/*
-     $scope.btnMsg = false;
-     $scope.msgFoto = true;
-*/
-    }, function(err) {
-       alert ('captura de foto cancelada.')
-    });
+       $scope.usuario.foto_perfil  =  imageData;
+       $scope.btnMsg = false;
+       $scope.msgFoto = true;
+
+      }, function(err) {
+         alert ('captura de foto cancelada.')
+      });
+
+
 
 }
+
 
 $scope.carregarVideo = function(opc){
   $scope.foto  =  " foto";

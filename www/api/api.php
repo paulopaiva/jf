@@ -252,6 +252,13 @@ if($filter === 'POST'){
                              "usuario.idusuario ORDER BY classificado.idclassificado desc LIMIT {$data->pagina},30");
              echo json_encode($read->getResult());
         break;
+        case "pegaLojista":
+              $read = new Read;
+              //$read->ExeRead('user');
+              $read->FullRead("SELECT lojista.*,usuario.nome, usuario.telefone, usuario.endereco FROM lojista INNER JOIN usuario ON lojista.idusuario =".
+                              "usuario.idusuario ORDER BY lojista.idlojista desc LIMIT {$data->pagina},30");
+              echo json_encode($read->getResult());
+         break;
 
 
 
