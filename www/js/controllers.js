@@ -704,8 +704,6 @@ $scope.verificaUsuario = function (usuario){
             data: valores,
             headers: {'Content-Type': 'application/x-www-form-urlencoded'}
           }).success(function(data){
-            console.log(valores);
-            console.log(data)
             // se existir o usuario coloca os dados para o telefone
             if ((data.length > 0) && (idUsuario==null)){ // cadastro ja existente no banco
               $ionicLoading.hide();
@@ -717,7 +715,7 @@ $scope.verificaUsuario = function (usuario){
               usuario.rg = data[0].rg;
               usuario.localizacao = data[0].localizacao;
               usuario.telefone = data[0].telefone;
-              usuario.foto_perfil = data[0].foto_perfil;
+              usuario.foto_perfil = data[0].foto;
               usuario.data_nascimento = data[0].data_nascimento;
               usuario.email = data[0].email;
 

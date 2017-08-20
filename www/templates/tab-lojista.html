@@ -15,18 +15,19 @@
 
 <div  class="list" ng-repeat="pega in listaLojista | filter:criterioDeBusca" cache-view="false">
 <!-- <img class="full-image" src="images/play-in.png" ng-click="mostraVideo($index)" ng-show="{{pega.video}}"> ng-click="mostraFoto(pega.foto,pega.titulo)" -->
-  <a class="item item-thumbnail-left" ng-click="verLojista($index)">
+  <a class="item item-thumbnail-left" ng-click="mostraFoto(pega.foto,pega.titulo)">
      <img  src="{{pega.foto}}" ng-show="{{pega.foto}}" > </img>
      <h3><p style="color:black">{{pega.titulo}}</p></h3>
      <div class="item item-text-wrap">
       <h4> {{pega.descricao}}</h4>
      </div>
 
-     <span class="input-label" style="font-size: 10px; font-weight: bold; color:darkgray;">Telefone :{{pega.telefone}}</span>
+
   </a>
 
  </div>
 <!-- <img class="full-image" src="images/play-in.png" ng-click="mostraVideo($index)" ng-show="{{pega.video}}"> -->
+<!--     <span class="input-label" style="font-size: 10px; font-weight: bold; color:darkgray;">Telefone :{{pega.telefone}}</span>  -->
 <!--   <video id="VideoPlay" controls loop ng-show="{{pega.video}}"><source src="{{pega.video}}" type="video/mp4"/></video>
    <a id="play" class="button button-block {{btn_tema}}" ng-click="videoplay()" ng-show="{{pega.video}}"> Play</a>  -->
 
