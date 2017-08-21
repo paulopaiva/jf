@@ -141,6 +141,23 @@ $scope.verAnuncio = function(index) {
 
 };
 
+$scope.verMeuAnuncio = function(index) {
+
+  $scope.index=index;
+  $scope.classificado.nome= $scope.listaClassificado[index].nome;
+  $scope.classificado.telefone= $scope.listaClassificado[index].telefone;
+  $scope.classificado.bairro= $scope.listaClassificado[index].bairro;
+  $scope.classificado.categoria= $scope.listaClassificado[index].categoria;
+  $scope.classificado.titulo= $scope.listaClassificado[index].titulo;
+  $scope.classificado.data_hora= $scope.listaClassificado[index].data_hora;
+  $scope.classificado.preco= $scope.listaClassificado[index].preco;
+  $scope.classificado.foto= $scope.listaClassificado[index].foto;
+  $scope.classificado.descricao= $scope.listaClassificado[index].descricao;
+  $scope.mostra_anuncio_finaliza();
+
+};
+
+
 $scope.comentarNotificacao = function(idmensagem, qtd, index) {
   $scope.idmensagem=idmensagem;
   $scope.qtdComentario=qtd;
@@ -1444,7 +1461,7 @@ $scope.carregarFotoPerfil = function(opc){
        $scope.msgFoto = true;
 
       }, function(err) {
-         alert ('captura de foto cancelada.')
+         alert ('captura de foto cancelada.');
       });
 
 
@@ -1548,6 +1565,31 @@ $scope.limparDados = function(){
 }
 
 //===========================================================================================
+$ionicModal.fromTemplateUrl('templates/tab-minhaconta.html', {
+  scope: $scope
+}).then(function(minhaconta) {
+  $scope.tabMinhaconta = minhaconta;
+});
+
+// Triggered in the login modal to close it
+$scope.close_minhaconta = function() {
+  $scope.tabMinhaconta.hide();
+};
+// Open the login modal
+$scope.tab_minhaconta = function() {
+
+  $scope.usuario.nome= localStorage.getItem('nome');
+  $scope.usuario.telefone = localStorage.getItem('telefone');
+  $scope.usuario.email = localStorage.getItem('email');
+  $scope.usuario.foto_perfil = localStorage.getItem('foto_perfil');
+
+  if ($scope.usuario.foto_perfil==null){
+     $scope.usuario.foto_perfil="images/foto.jpg";
+  }
+  $scope.tabMinhaconta.show();
+};
+
+
 $ionicModal.fromTemplateUrl('templates/menu-classificado.html', {
   scope: $scope
 }).then(function(classificado) {
@@ -1583,6 +1625,22 @@ $scope.tab_Lojista = function() {
   $scope.tabLojista.show();
 };
 **/
+$ionicModal.fromTemplateUrl('templates/tab-meusanuncios.html', {
+  scope: $scope
+}).then(function(meusanuncios) {
+  $scope.tab_meusanuncios = meusanuncios;
+});
+
+// Triggered in the login modal to close it
+$scope.close_meusanuncios = function() {
+  $scope.tab_meusanuncios.hide();
+};
+
+// Open the login modal
+$scope.meusanuncios = function() {
+  $scope.pegaClassificado();
+  $scope.tab_meusanuncios.show();
+};
 
 $ionicModal.fromTemplateUrl('templates/tab-anuncio.html', {
   scope: $scope
@@ -1599,6 +1657,22 @@ $scope.mostra_anuncio = function() {
   $scope.menuAnuncio.show();
 
 };
+$ionicModal.fromTemplateUrl('templates/tab-anuncio-finaliza.html', {
+  scope: $scope
+}).then(function(anunciofinaliza) {
+  $scope.menuAnunciofinaliza = anunciofinaliza;
+});
+
+// Triggered in the login modal to close it
+$scope.close_anuncio_finaliza = function() {
+  $scope.menuAnunciofinaliza.hide();
+};
+// Open the login modal
+$scope.mostra_anuncio_finaliza = function() {
+  $scope.menuAnunciofinaliza.show();
+
+};
+
 
 
   $ionicModal.fromTemplateUrl('templates/menu-msg.html', {
@@ -1800,17 +1874,17 @@ $scope.usuario = function() {
  //$scope.verificaNet();
  $scope.usuario.idusuario=localStorage.getItem('idusuario');
  $scope.usuario.nome= localStorage.getItem('nome');
- $scope.usuario.idbairro= localStorage.getItem('idbairro');
+ $scope.usuario.email= localStorage.getItem('email');
+ $scope.usuario.data_nascimento= localStorage.getItem('data_nascimento');
  $scope.usuario.endereco = localStorage.getItem('endereco');
  $scope.usuario.telefone = localStorage.getItem('telefone');
+  $scope.usuario.rg = localStorage.getItem('rg');
+   $scope.usuario.data_nascimento = localStorage.getItem('data_nascimento');
  $scope.usuario.tipo = localStorage.getItem('tipo');
- $scope.usuario.foto_perfil = localStorage.getItem('foto');
- $scope.usuario.idcoletor = localStorage.getItem('idcoletor');
+ $scope.usuario.foto_perfil = localStorage.getItem('foto_perfil');
  if ($scope.usuario.foto_perfil==null){
     $scope.usuario.foto_perfil="images/foto.jpg";
  }
-   $scope.pegaBairro();
-   $scope.pegaColetor();
    $scope.pegaLocal();
    $scope.modalusuario.show();
 };
@@ -1984,53 +2058,6 @@ $scope.pegaCurtir = function(idmensagem, qtd) {
     $scope.modalpegacurtir.show();
 };
 
-$ionicModal.fromTemplateUrl('templates/tab-bloqueado.html', {
-    scope: $scope
-  }).then(function(modal) {
-    $scope.modalbloqueado = modal;
-});
-
-$scope.closeusuarioBloqueado = function() {
- //   $scope.modalbloqueado.hide();
-  //  encerrar o aplicativo
-  navigator.app.exitApp();
-};
-
-$scope.usuarioBloqueado = function() {
-   $scope.modalbloqueado.show();
-};
-
-$ionicModal.fromTemplateUrl('templates/tab-ativar.html', {
-
-    scope: $scope,
-  }).then(function(modal) {
-    $scope.modalativar = modal;
-});
-
-$scope.closeativarUsuario = function() {
-   $scope.modalativar.hide();
-  //  encerrar o aplicativo
-};
-
-$scope.ativarUsuario = function() {
-   $scope.modalativar.show();
-};
-$ionicModal.fromTemplateUrl('templates/video.html', {
-    scope: $scope
-  }).then(function(modal) {
-    $scope.modalvideo = modal;
-});
-
-$scope.closeVideo = function() {
-    var video = document.getElementById("Video");
-    video.pause();
-    video.src="";
-    $scope.modalvideo.hide();
-};
-
-$scope.video = function() {
-   $scope.modalvideo.show();
-};
 
 
 })  // fim mensgaemCtrl
