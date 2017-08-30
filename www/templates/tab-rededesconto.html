@@ -3,14 +3,14 @@
 
   <ion-header-bar  ng-class="tema">
 
-    <button class="button button-clear icon-left ion-ios-arrow-thin-left" ng-click="close_meusanuncios()"></button>
-    <div class="h1 title">Meus Anúncios</div>
+    <button class="button button-clear icon-left ion-ios-arrow-thin-left" ng-click="closeredeDesconto()"></button>
+    <div class="h1 title">Rede de Desconto</div>
     <button class="button button-clear ion-android-share-alt" ng-click="compartilha(classificado.titulo,classificado.descricao,classificado.foto,classificado.preco)"></button>
   </ion-header-bar>
   <ion-content class="padding has-header components-demo" >
     <ion-refresher
       pulling-text="Refresh..."
-      on-refresh="pegaMeusClassificado()">
+      on-refresh="pegaLojista()">
     </ion-refresher>
 
 
@@ -21,16 +21,33 @@
     </label>
    </div>
 
-  <div  class="list" ng-repeat="pega in listaMeusClassificado | filter:criterioDeBusca" cache-view="false">
+  <div  class="list" ng-repeat="pega in listaLojista | filter:criterioDeBusca" cache-view="false">
   <!-- <img class="full-image" src="images/play-in.png" ng-click="mostraVideo($index)" ng-show="{{pega.video}}"> ng-click="mostraFoto(pega.foto,pega.titulo)" -->
-  <a class="item item-thumbnail-left" ng-click="verMeuAnuncio($index)">
-    <img src="{{pega.foto}}">
-    <h2>{{pega.titulo}}</h2>
-    </br>
-    <h2 style="color:#FF5722;">R${{ pega.preco }}</h2>
-    <h4 style="color:darkgray;">{{ pega.data_hora }}</h4>
-  </a>
 
+  <div class="list card" >
+  <!--
+    <div class="item item-avatar">
+
+      <h2>{{pega.titulo}}</h2>
+      <p>{{pega.descricao}}</p>
+    </div>
+-->
+    <div class="item item-image">
+      <img src="{{pega.foto}}">
+    </div>
+    <a class="item item-icon-left assertive" href="#" ng-show="{{pega.desconto_percentual}}">
+      <i class="icon ion-cash"></i>
+      Desconto de {{pega.desconto_percentual}}%
+    </a>
+    <a class="item item-icon-left assertive" href="#" ng-show="{{pega.desconto_valor}}">
+      <i class="icon ion-cash"></i>
+      Desconto de R${{pega.desconto_valor}}
+    </a>
+    <button class="button button-full button-energized" ng-click="gerarCupom($index)">
+      <i class="ion-ios-cart"></i> Pegar Cupom
+    </button>
+
+  </div>
 
    </div>
 

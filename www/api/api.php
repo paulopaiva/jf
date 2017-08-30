@@ -249,9 +249,16 @@ if($filter === 'POST'){
              $read = new Read;
              //$read->ExeRead('user');
              $read->FullRead("SELECT classificado.*,usuario.nome, usuario.telefone FROM classificado INNER JOIN usuario ON classificado.idusuario =".
-                             "usuario.idusuario ORDER BY classificado.idclassificado desc LIMIT {$data->pagina},30");
+                             "usuario.idusuario where (classificado.status = 'NOVO') ORDER BY classificado.idclassificado desc LIMIT {$data->pagina},30");
              echo json_encode($read->getResult());
         break;
+        case "pegaMeusClassificado":
+              $read = new Read;
+              //$read->ExeRead('user');
+              $read->FullRead("SELECT classificado.*,usuario.nome, usuario.telefone FROM classificado INNER JOIN usuario ON classificado.idusuario =".
+                              "usuario.idusuario where ((classificado.idusuario = '{$data->idusuario}') and (classificado.status = 'NOVO')) ORDER BY classificado.idclassificado desc LIMIT {$data->pagina},30");
+              echo json_encode($read->getResult());
+         break;
         case "pegaLojista":
               $read = new Read;
               //$read->ExeRead('user');
@@ -380,6 +387,41 @@ if($filter === 'POST'){
 
            break;
       default:
+      case "atualizarAnuncio":
+         $Dados=array(
+
+              'titulo' => $data->titulo,
+              'descricao' => $data->descricao,
+              'preco' => $data->preco,
+              'categoria' => $data->categoria
+             );
+
+          $atualizaDados = new Update();
+          $atualizaDados->ExeUpdate('classificado', $Dados,'where idclassificado='.$data->idclassificado,"");
+          //Leitura no Banco
+          $read = new Read;
+          $read->FullRead("SELECT * from classificado ORDER BY classificado.idclassificado desc LIMIT {$data->pagina},1");
+          echo json_encode($read->getResult());
+
+          break;
+     default:
+     case "salvarFinalizar":
+        $Dados=array(
+             'status' => $data->status,
+             'status_finaliza' => $data->status_finaliza,
+             'data_finalizado' =>$data->data_finalizado
+            );
+
+         $atualizaDados = new Update();
+         $atualizaDados->ExeUpdate('classificado', $Dados,'where idclassificado='.$data->idclassificado,"");
+
+         //Leitura no Banco
+         $read = new Read;
+         $read->FullRead("SELECT * from classificado ORDER BY classificado.idclassificado desc LIMIT {$data->pagina},1");
+         echo json_encode($read->getResult());
+
+         break;
+    default:
 
 
         case "gravarMensagem":

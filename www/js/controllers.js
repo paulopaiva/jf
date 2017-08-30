@@ -15,11 +15,13 @@ angular.module('starter.controllers', [])
 if (start==0) {
     $scope.classificado ={};
     $scope.classificado.foto="images/foto.jpg";
+    $scope.classificado.status_finaliza="Vendi pelo Aplicativo";
     $scope.foto="";
     $scope.classefoto="foto-avatar";
     $scope.lista = [];
     $scope.listaComentario = [];
     $scope.listaCurtir = [];
+    $scope.btnFinalizar= true;
     $scope.btnMsg = true;
     $scope.msgFoto = false;
     $scope.msgVideo = false;
@@ -113,6 +115,9 @@ document.addEventListener('deviceready',function(){ // inicia o aplicativo
     }
    }, false);
 
+
+
+
 $scope.verificaNet = function(){
 
   var type = $cordovaNetwork.getNetwork()
@@ -124,10 +129,38 @@ $scope.verificaNet = function(){
    }
 }
 
+$scope.gerarCupom = function(index){
+
+  var numero = Math.floor(Math.random() * 99999) - 00001;
+  var letras = 'ABCDEFGHIJKLMNOPQRSTUVWXTZ';
+  var aleatorio = '';
+  for (var i = 0; i < 3 ; i++) {
+      var rnum = Math.floor(Math.random() * letras.length);
+      aleatorio += letras.substring(rnum, rnum + 1);
+  }
+var a=("00000" + numero).slice(-5);
+
+  $scope.lojista={};
+  $scope.lojista.numero_cupom= (aleatorio+a);
+  $scope.lojista.idlojista= $scope.listaLojista[index].idlojista;
+  $scope.lojista.nome= $scope.listaLojista[index].nome;
+  $scope.lojista.telefone= $scope.listaLojista[index].telefone;
+  $scope.lojista.desconto_valor= $scope.listaLojista[index].desconto_valor;
+  $scope.lojista.desconto_percentual= $scope.listaLojista[index].desconto_percentual;
+  $scope.lojista.endereco= $scope.listaLojista[index].endereco;
+  $scope.lojista.titulo= $scope.listaLojista[index].titulo;
+  $scope.lojista.foto= $scope.listaLojista[index].foto;
+  $scope.lojista.descricao= $scope.listaLojista[index].descricao;
+
+  $scope.tab_mostraCupom();
+}
+
+
 
 $scope.verAnuncio = function(index) {
 
   $scope.index=index;
+  $scope.classificado.idclassificado= $scope.listaClassificado[index].idclassificado;
   $scope.classificado.nome= $scope.listaClassificado[index].nome;
   $scope.classificado.telefone= $scope.listaClassificado[index].telefone;
   $scope.classificado.bairro= $scope.listaClassificado[index].bairro;
@@ -144,15 +177,16 @@ $scope.verAnuncio = function(index) {
 $scope.verMeuAnuncio = function(index) {
 
   $scope.index=index;
-  $scope.classificado.nome= $scope.listaClassificado[index].nome;
-  $scope.classificado.telefone= $scope.listaClassificado[index].telefone;
-  $scope.classificado.bairro= $scope.listaClassificado[index].bairro;
-  $scope.classificado.categoria= $scope.listaClassificado[index].categoria;
-  $scope.classificado.titulo= $scope.listaClassificado[index].titulo;
-  $scope.classificado.data_hora= $scope.listaClassificado[index].data_hora;
-  $scope.classificado.preco= $scope.listaClassificado[index].preco;
-  $scope.classificado.foto= $scope.listaClassificado[index].foto;
-  $scope.classificado.descricao= $scope.listaClassificado[index].descricao;
+  $scope.classificado.idclassificado= $scope.listaMeusClassificado[index].idclassificado;
+  $scope.classificado.nome= $scope.listaMeusClassificado[index].nome;
+  $scope.classificado.telefone= $scope.listaMeusClassificado[index].telefone;
+  $scope.classificado.bairro= $scope.listaMeusClassificado[index].bairro;
+  $scope.classificado.categoria= $scope.listaMeusClassificado[index].categoria;
+  $scope.classificado.titulo= $scope.listaMeusClassificado[index].titulo;
+  $scope.classificado.data_hora= $scope.listaMeusClassificado[index].data_hora;
+  $scope.classificado.preco= $scope.listaMeusClassificado[index].preco;
+  $scope.classificado.foto= $scope.listaMeusClassificado[index].foto;
+  $scope.classificado.descricao= $scope.listaMeusClassificado[index].descricao;
   $scope.mostra_anuncio_finaliza();
 
 };
@@ -443,6 +477,22 @@ var valores = {
           headers: {'Content-Type': 'application/x-www-form-urlencoded'}
         }).success(function(data){
           $scope.listaClassificado = data;
+        });
+};
+$scope.pegaMeusClassificado = function(){
+var valores = {
+  parametros:'pegaMeusClassificado',
+  idusuario:idUsuario,
+  pagina:0
+}
+
+    $http({
+          method:'POST',
+          url: path+'api/api.php',
+          data: valores,
+          headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+        }).success(function(data){
+          $scope.listaMeusClassificado = data;
         });
 };
 
@@ -1174,6 +1224,50 @@ $scope.enviarAnuncio = function(formulario){
 };
 
 
+$scope.atualizarAnuncio = function(){
+
+      $ionicLoading.show({
+        template: 'Enviando...'
+      });
+
+      $scope.currentPercentage=0;
+
+        $scope.dataURL = $scope.classificado.foto;
+        var today = new Date();
+        $scope.foto_file="img_file-"+today.getFullYear()+"-"+(today.getMonth()+1)+"-"+today.getDate()+"-"+today.getHours()+"-"+today.getMinutes()+"-"+today.getSeconds()+today.getMilliseconds()+".jpg";
+        $scope.foto_file_path=path+'foto/'+$scope.foto_file;
+       // enviar o arquivo compactado *******************************************
+
+        var url = path+"uploadftp_foto.php";
+        //File for Upload
+        var targetPath =$scope.dataURL;
+        // File name only
+        var filename = $scope.foto_file;
+        var options = {
+             fileKey: "file",
+             fileName: filename,
+             chunkedMode: false,
+             mimeType: "image/jpg",
+         params : {'directory':'upload', 'fileName':filename} // directory represents remote directory,  fileName represents final remote file name
+         };
+         $cordovaFileTransfer.upload(url, targetPath, options).then(function (result) {
+            // //console.log("SUCCESS: " + JSON.stringify(result.response));
+             $scope.atualizar_Anuncio();
+           //  $scope.fotoForm.$setPristine();
+
+         }, function (err) {
+             $ionicLoading.hide();
+             $scope.showAlert("Erro ao Enviar Imagem", JSON.stringify(err));
+         }, function (progress) {
+                 if (progress.lengthComputable) {
+                   var perc = Math.floor(progress.loaded / progress.total * 100);
+                   $scope.currentPercentage=perc;
+                }
+         });
+
+
+};
+
 
 $scope.pegaLocal = function(){
 
@@ -1346,6 +1440,79 @@ $http({
 
  }
 }
+
+$scope.atualizar_Anuncio = function(){
+
+var valores = {
+  parametros:'atualizarAnuncio',
+  pagina:0,
+  idclassificado:$scope.classificado.idclassificado,
+  titulo:$scope.classificado.titulo,
+  descricao:$scope.classificado.descricao,
+  categoria:$scope.classificado.categoria,
+  preco:$scope.classificado.preco,
+  idclassificado:$scope.classificado.idclassificado
+
+}
+
+$http({
+      method:'POST',
+      url: path+'api/api.php',
+      data: valores,
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+    }).success(function(data){
+  //     console.log(data);
+       $ionicLoading.hide();
+
+//      $scope.showAlert('Informação','Sua mensagem foi enviada com sucesso!')
+       $scope.close_editaranuncio();
+//       $scope.limpaAnuncio();
+//       $scope.listaClassificado=[];
+//       $scope.pegaClassificado();
+
+       $scope.showAlert('Informação','Seu anúncio em breve estará atualizado, agurade.');
+
+    }).error(function(data){
+       $ionicLoading.hide();
+       $scope.showAlert('Informação','erro ao enviar a mensagem, sem conexão com a internet.');
+
+    });
+}
+
+
+
+$scope.salvarFinalizar = function(){
+
+  var today = new Date();
+  var dt =today.getFullYear()+"-"+(today.getMonth()+1)+"-"+today.getDate()+" "+today.getHours()+":"+today.getMinutes()+":"+today.getSeconds();
+
+var valores = {
+  parametros:'salvarFinalizar',
+  pagina:0,
+  idclassificado:$scope.classificado.idclassificado,
+  status_finaliza:$scope.classificado.status_finaliza,
+  status:'FINALIZADO',
+  data_finalizado:dt
+
+}
+
+
+$http({
+      method:'POST',
+      url: path+'api/api.php',
+      data: valores,
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+    }).success(function(data){
+       $scope.showAlert('Informação','Seu anúncio foi finalizado.');
+      $scope.close_confirma_finalizacao();
+      $scope.close_anuncio_finaliza();
+    }).error(function(data){
+  //     $ionicLoading.hide();
+       $scope.showAlert('Informação','erro ao enviar a mensagem, sem conexão com a internet.');
+
+    });
+}
+
 
 // inicio popup
 $scope.showPopup = function() {
@@ -1589,6 +1756,36 @@ $scope.tab_minhaconta = function() {
   $scope.tabMinhaconta.show();
 };
 
+$ionicModal.fromTemplateUrl('templates/tab-rededesconto.html', {
+    scope: $scope
+  }).then(function(rededesconto) {
+    $scope.rededesconto = rededesconto;
+});
+
+$scope.closeredeDesconto = function() {
+    $scope.rededesconto.hide();
+};
+
+$scope.redeDesconto = function() {
+   $scope.pegaLojista();
+   $scope.rededesconto.show();
+};
+
+$ionicModal.fromTemplateUrl('templates/tab-mostra-cupom.html', {
+    scope: $scope
+  }).then(function(mostracupom) {
+    $scope.mostracupom = mostracupom;
+});
+
+$scope.closemostraCupom = function() {
+    $scope.mostracupom.hide();
+};
+
+$scope.tab_mostraCupom = function() {
+   $scope.mostracupom.show();
+};
+
+
 
 $ionicModal.fromTemplateUrl('templates/menu-classificado.html', {
   scope: $scope
@@ -1638,9 +1835,29 @@ $scope.close_meusanuncios = function() {
 
 // Open the login modal
 $scope.meusanuncios = function() {
-  $scope.pegaClassificado();
+
+  $scope.pegaMeusClassificado();
   $scope.tab_meusanuncios.show();
 };
+
+$ionicModal.fromTemplateUrl('templates/tab-editaranuncio.html', {
+  scope: $scope
+}).then(function(editaranuncio) {
+  $scope.tab_editaranuncio = editaranuncio;
+});
+
+// Triggered in the login modal to close it
+$scope.close_editaranuncio = function() {
+  $scope.tab_editaranuncio.hide();
+};
+
+// Open the login modal
+$scope.editaranuncio = function() {
+  $scope.classefoto="foto-perfil";
+  $scope.pegaCategoria();
+  $scope.tab_editaranuncio.show();
+};
+
 
 $ionicModal.fromTemplateUrl('templates/tab-anuncio.html', {
   scope: $scope
@@ -1673,6 +1890,21 @@ $scope.mostra_anuncio_finaliza = function() {
 
 };
 
+$ionicModal.fromTemplateUrl('templates/tab-confirma-finalizacao.html', {
+  scope: $scope
+}).then(function(confirmafinalizacao) {
+  $scope.confirmafinalizacao = confirmafinalizacao
+});
+
+// Triggered in the login modal to close it
+$scope.close_confirma_finalizacao = function() {
+  $scope.confirmafinalizacao.hide();
+};
+// Open the login modal
+$scope.mostra_confirma_finalizacao = function() {
+  $scope.confirmafinalizacao.show();
+
+};
 
 
   $ionicModal.fromTemplateUrl('templates/menu-msg.html', {

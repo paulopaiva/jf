@@ -10,9 +10,8 @@
 -->
   <ion-header-bar  ng-class="tema">
 
-    <button class="button button-clear icon-left ion-ios-arrow-thin-left" ng-click="close_anuncio_finaliza()"></button>
-    <div class="h1 title">Meu Anúncio</div>
-    <button class="button button-clear ion-android-share-alt" ng-click="compartilha(classificado.titulo,classificado.descricao,classificado.foto,classificado.preco)"></button>
+    <button class="button button-clear icon-left ion-ios-arrow-thin-left" ng-click="close_confirma_finalizacao()"></button>
+    <div class="h1 title">Finalizar Anúncio</div>
   </ion-header-bar>
 
 
@@ -38,6 +37,10 @@
           <span class="item-label" style="font-weight: bold; color:black;">{{classificado.data_hora}}</span>
         </label>
         <label class="item item-input item-stacked-label">
+          <i class="icon ion-location" style="color:#8F28AF;" ></i>
+          <span class="input-label" style="font-size: 18px; font-weight: bold; color:black;"> {{classificado.bairro}}</span>
+        </label>
+        <label class="item item-input item-stacked-label">
           <span class="input-label"  style="color:#8F28AF;">Categoria</span>
           <span class="input-label" style="font-weight: bold; color:black;">Categoria  {{classificado.categoria}}</span>
         </label>
@@ -46,23 +49,33 @@
           {{classificado.descricao}}
         </div>
         <label class="item item-input item-stacked-label">
-          <span class="input-label" style="color:#8F28AF;">Anunciante</span>
-          <span class="input-label" style="font-weight: bold; color:black;">{{classificado.nome}}</span>
-        </label>
-        <label class="item item-input item-stacked-label">
-          <span class="input-label" style="color:#8F28AF;">Telefone</span>
-          <span class="input-label" style="font-weight: bold; color:black;">{{classificado.telefone}}</span>
+           <span class="input-label" style="font-size: 18px; font-weight: bold; color:black;">Qual o Motivo?</span>
         </label>
 
-        <button class="button button-full button-royal" ng-click="editaranuncio()">
-          <i class="ion-ios-paper"></i> Editar Anúncio
-        </button>
-        <button class="button button-full button-energized"ng-click="mostra_confirma_finalizacao()" >
-          <i class="ion-ios-cart"></i> Finalizar Anúncio
+
+
+        <form name="Form">
+          <div class="card">
+
+         <div style="color: red">
+           <div ng-show="Form.motivo.$invalid && usuarioForm.motivo.$dirty">
+             <i class="icon ion-alert-circled"></i> Por favor informe o motivo...
+           </div>
+        </div>
+
+        <ion-list name="motivo">
+        <ion-radio  ng-model="classificado.status_finaliza" ng-value="'Vendi pelo Aplicativo'">Vendi pelo Aplicativo</ion-radio>
+        <ion-radio ng-model="classificado.status_finaliza" ng-value="'Vendi por outro'">Vendi por outro</ion-radio>
+        <ion-radio ng-model="classificado.status_finaliza" ng-value="'Desitir de vender'">Desitir de vender</ion-radio>
+        <ion-radio ng-model="classificado.status_finaliza" ng-value="'Outro motivo'">Outro motivo</ion-radio>
+        </ion-list>
+
+        <button class="button button-full button-energized" ng-disabled="Form.$invalid" ng-click="salvarFinalizar()" >
+          <i class="ion-ios-cart"></i> Confirma
         </button>
 
        </div>
-
+      </form>
   </ion-content>
 
 
