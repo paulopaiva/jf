@@ -4,7 +4,7 @@
   <ion-header-bar  ng-class="tema">
 
     <button class="button button-clear icon-left ion-ios-arrow-thin-left" ng-click="closeredeDesconto()"></button>
-    <div class="h1 title">Rede de Desconto</div>
+    <div class="h1 title">Rede de Vantagens</div>
     <button class="button button-clear ion-android-share-alt" ng-click="compartilha(classificado.titulo,classificado.descricao,classificado.foto,classificado.preco)"></button>
   </ion-header-bar>
   <ion-content class="padding has-header components-demo" >
@@ -37,11 +37,11 @@
     </div>
     <a class="item item-icon-left assertive" href="#" ng-show="{{pega.desconto_percentual}}">
       <i class="icon ion-cash"></i>
-      Desconto de {{pega.desconto_percentual}}%
+       {{pega.desconto_percentual}}% de Takeback
     </a>
     <a class="item item-icon-left assertive" href="#" ng-show="{{pega.desconto_valor}}">
       <i class="icon ion-cash"></i>
-      Desconto de R${{pega.desconto_valor}}
+      R${{pega.desconto_valor}} de Tackback
     </a>
     <button class="button button-full button-energized" ng-click="gerarCupom($index)">
       <i class="ion-ios-cart"></i> Pegar Cupom
