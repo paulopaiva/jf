@@ -1,0 +1,44 @@
+<ion-modal-view>
+
+  <ion-header-bar  ng-class="tema">
+
+    <button class="button button-clear icon-left ion-ios-arrow-thin-left" ng-click="closeDesconto()"></button>
+    <div class="h1 title">Cupom de Desconto</div>
+  </ion-header-bar>
+
+
+  <ion-content>
+
+
+        <ion-card>
+          <div class="item item-image">
+             <img class="full-image" ng-src="{{desconto.foto}}">
+          </div>
+        </ion-card>
+
+       <div class="card">
+
+        <div class="item item-text-wrap" style="font-weight: bold; color:#FF5722;">
+          {{desconto.descricao}}
+        </div>
+
+        <label class="item item-input item-stacked-label">
+          <span class="input-label"  style="font-size: 16px; font-weight: bold; color:#8F28AF;">Custa</span>
+          <span class="item-label" style="text-decoration: line-through; font-size: 18px; font-weight: bold; color:#FF5722;" >R${{desconto.valor_normal}}</span>
+        </label>
+        <label class="item item-input item-stacked-label">
+          <span class="input-label"  style="font-size: 16px; font-weight: bold; color:#8F28AF;">Pague Apenas</span>
+          <span class="item-label" style="font-size: 18px; font-weight: bold; color:#FF5722;" >R${{desconto.valor_desconto}}</span>
+        </label>
+        <label class="item item-input item-stacked-label">
+          <span class="input-label"  style="font-size: 22px; font-weight: bold; color:#8F28AF;">Cupom</span>
+          <span class="item-label" style="font-size: 22px; font-weight: bold; color:#FF5722;" >{{desconto.numero_cupom}}</span>
+        </label>
+        <label class="item item-input item-stacked-label">
+          <span class="input-label"  style="font-size: 22px; font-weight: bold; color:#8F28AF;">Validade</span>
+          <span class="item-label" style="font-size: 22px; font-weight: bold; color:#FF5722;" >{{desconto.validade}}</span>
+        </label>
+  </ion-content>
+
+
+</ion-modal-view>

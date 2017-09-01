@@ -155,33 +155,7 @@ angular.module('starter', ['ionic', 'starter.controllers','ngCordova'])
 
   // Each tab has its own nav history stack:
 
-  .state('tab.agenda', {
-    url: '/agenda',
-    views: {
-      'tab-agenda': {
-        templateUrl: 'templates/tab-agenda.html',
-        controller: 'StatusCtrl'
-      }
-    }
-  })
-  .state('tab.patio', {
-    url: '/patio',
-    views: {
-      'tab-patio': {
-        templateUrl: 'templates/tab-patio.html',
-        controller: 'StatusCtrl'
-      }
-    }
-  })
-  .state('tab.multa', {
-    url: '/multa',
-    views: {
-      'tab-multa': {
-        templateUrl: 'templates/tab-multa.html',
-        controller: 'StatusCtrl'
-      }
-    }
-  })
+
   .state('tab.lojista', {
       url: '/lojista',
       views: {
@@ -191,34 +165,7 @@ angular.module('starter', ['ionic', 'starter.controllers','ngCordova'])
         }
       }
     })
-  .state('tab.entreternimento', {
-      url: '/entreternimento',
-      views: {
-        'tab-entreternimento': {
-          templateUrl: 'templates/tab-entreternimento.html',
-          controller: 'EntreternimentoCtrl'
-        }
-      }
-    })
 
-  .state('tab.notificacao', {
-      url: '/notificacao',
-      views: {
-        'tab-notificacao': {
-          templateUrl: 'templates/tab-notificacao.html',
-          controller: 'StatusCtrl'
-        }
-      }
-    })
-  .state('tab.status', {
-      url: '/status',
-      views: {
-        'tab-status': {
-          templateUrl: 'templates/tab-status.html',
-          controller: 'StatusCtrl'
-        }
-      }
-   })
   .state('tab.mapa', {
       url: '/mapa',
       views: {
@@ -228,15 +175,24 @@ angular.module('starter', ['ionic', 'starter.controllers','ngCordova'])
         }
       }
   })
-    .state('tab.video', {
-      url: '/video',
+    .state('tab.cashback', {
+      url: '/cashback',
       views: {
-        'tab-video': {
-          templateUrl: 'templates/tab-video.html',
+        'tab-cashback': {
+          templateUrl: 'templates/tab-cashback.html',
           controller: 'StatusCtrl'
         }
       }
   })
+  .state('tab.desconto', {
+    url: '/desconto',
+    views: {
+      'tab-desconto': {
+        templateUrl: 'templates/tab-desconto.html',
+        controller: 'StatusCtrl'
+      }
+    }
+})
   .state('tab.classificado', {
       url: '/classificado',
       views: {
@@ -246,33 +202,9 @@ angular.module('starter', ['ionic', 'starter.controllers','ngCordova'])
         }
       }
   })
-    .state('tab.colaboradores', {
-      url: '/colaboradores',
-      views: {
-        'tab-colaboradores': {
-          templateUrl: 'templates/tab-colaboradores.html',
-          controller: 'StatusCtrl'
-        }
-      }
-  })
-    .state('tab.servicos', {
-      url: '/servicos',
-      views: {
-        'tab-servicos': {
-          templateUrl: 'templates/tab-servicos.html',
-          controller: 'StatusCtrl'
-        }
-      }
-  })
-  .state('tab.msg', {
-    url: '/msg',
-    views: {
-      'tab-msg': {
-        templateUrl: 'templates/tab-msg.html',
-        controller: 'StatusCtrl'
-      }
-    }
-  })
+
+
+
 
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/tab/classificado');

@@ -259,14 +259,20 @@ if($filter === 'POST'){
                               "usuario.idusuario where ((classificado.idusuario = '{$data->idusuario}') and (classificado.status = 'NOVO')) ORDER BY classificado.idclassificado desc LIMIT {$data->pagina},30");
               echo json_encode($read->getResult());
          break;
-        case "pegaLojista":
+        case "pegaCashBack":
               $read = new Read;
               //$read->ExeRead('user');
-              $read->FullRead("SELECT lojista.*,usuario.nome, usuario.telefone, usuario.endereco FROM lojista INNER JOIN usuario ON lojista.idusuario =".
-                              "usuario.idusuario ORDER BY lojista.titulo LIMIT {$data->pagina},30");
+              $read->FullRead("SELECT cashback.*,lojista.nome, lojista.telefone, lojista.endereco FROM cashback INNER JOIN lojista ON cashback.idlojista =".
+                              "lojista.idlojista ORDER BY cashback.titulo LIMIT {$data->pagina},99999");
               echo json_encode($read->getResult());
          break;
-
+         case "pegaDesconto":
+               $read = new Read;
+               //$read->ExeRead('user');
+               $read->FullRead("SELECT desconto.*,lojista.nome, lojista.telefone, lojista.endereco FROM desconto INNER JOIN lojista ON desconto.idlojista =".
+                               "lojista.idlojista ORDER BY desconto.titulo LIMIT {$data->pagina},99999");
+               echo json_encode($read->getResult());
+          break;
 
 
        case "pegaStatusUsuario":
@@ -422,7 +428,81 @@ if($filter === 'POST'){
 
          break;
     default:
+    case "gerarCupom_desconto":
+       $Dados=array(
 
+            'status' => $data->status,
+            'idusuario' => $data->idusuario,
+            'idlojista' => $data->idlojista,
+            'data' => $data->data,
+            'data_validade' => $data->data_validade,
+            'valor_normal' => $data->valor_normal,
+            'valor_desconto' => $data->valor_desconto,
+            'data_hora' => $data->data_hora,
+            'numero_cupom' => $data->numero_cupom,
+            'iddesconto' => $data->iddesconto
+           );
+
+        $cadastra = new Create();
+        $cadastra->ExeCreate('cupom_desconto', $Dados);
+        //Leitura no Banco
+        $read = new Read;
+        $read->FullRead("SELECT idcupom_desconto from cupom_desconto ORDER BY idcupom_desconto desc LIMIT {$data->pagina},1");
+        echo json_encode($read->getResult());
+
+        break;
+   default:
+
+    case "gerarCupom_cash":
+       $Dados=array(
+
+            'status' => $data->status,
+            'idusuario' => $data->idusuario,
+            'idlojista' => $data->idlojista,
+            'data' => $data->data,
+            'data_validade' => $data->data_validade,
+            'percentual_cliente' => $data->percentual_cliente,
+            'percentual_rede' => $data->percentual_rede,
+            'percentual_total' => $data->percentual_total,
+            'data_hora' => $data->data_hora,
+            'numero_cupom' => $data->numero_cupom,
+            'idcashback' => $data->idcashback
+           );
+
+        $cadastra = new Create();
+        $cadastra->ExeCreate('cupom_cashback', $Dados);
+        //Leitura no Banco
+        $read = new Read;
+        $read->FullRead("SELECT idcupom_cashback from cupom_cashback ORDER BY idcupom_cashback desc LIMIT {$data->pagina},1");
+        echo json_encode($read->getResult());
+
+        break;
+   default:
+
+   case "pegaqtd_cupom":
+       //Leitura no Banco
+       $read = new Read;
+       $read->FullRead("SELECT iddesconto, qtd_disponivel from desconto  where (iddesconto='{$data->iddesconto}') LIMIT {$data->pagina},1");
+       echo json_encode($read->getResult());
+
+       break;
+  default:
+
+   case "atualizaqtd_cupom":
+      $Dados=array(
+           'qtd_disponivel' => $data->qtd_disponivel
+
+        );
+       $atualizaDados = new Update();
+       $atualizaDados->ExeUpdate('desconto', $Dados,'where iddesconto='.$data->iddesconto,"");
+
+       //Leitura no Banco
+  //     $read = new Read;
+  //     $read->FullRead("SELECT iddesconto, qtd_disponivel from desconto  where (iddesconto='{$data->iddesconto}') desc LIMIT {$data->pagina},1");
+  //     echo json_encode($read->getResult());
+
+       break;
+  default:
 
         case "gravarMensagem":
 			     $Dados=array(

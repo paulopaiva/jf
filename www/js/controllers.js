@@ -1,16 +1,6 @@
 angular.module('starter.controllers', [])
 .controller('StatusCtrl', function($scope,   $cordovaCapture, $cordovaStatusbar,  $state, $cordovaNetwork,  $cordovaGeolocation, $cordovaToast, $http, Conexao, $cordovaContacts, $cordovaSocialSharing, $ionicModal, $cordovaCamera, $ionicLoading, $cordovaFileTransfer,  $timeout, $ionicPopup)  {
 
-//$cordovaStatusbar,
-//    $cordovaStatusbar.overlaysWebView(true);
-    // styles: Default : 0, LightContent: 1, BlackTranslucent: 2, BlackOpaque: 3
-//    $cordovaStatusbar.style(1);
-    // supported names: black, darkGray, lightGray, white, gray, red, green,
-    // blue, cyan, yellow, magenta, orange, purple, brown
-//    $cordovaStatusbar.styleHex('#8F28AF');
-  //  $cordovaStatusbar.hide();
-//    $cordovaStatusbar.show();
-//    var isVisible = $cordovaStatusbar.isVisible();
 
 if (start==0) {
     $scope.classificado ={};
@@ -129,30 +119,174 @@ $scope.verificaNet = function(){
    }
 }
 
-$scope.gerarCupom = function(index){
+$scope.gerarCupom_cash = function(index){
+  $ionicLoading.show({
+   template: 'Aguarde, gerando seu cupom...'
+ });
 
-  var numero = Math.floor(Math.random() * 99999) - 00001;
+  $scope.cashback={};
+  var today = new Date();
+  var dt_val = new Date();
+  dt_val.setDate(today.getDate()+(parseInt($scope.listaCash[index].validade_dias)-1));
+  var dt =today.getFullYear()+"-"+(today.getMonth()+1)+"-"+today.getDate()+" "+today.getHours()+":"+today.getMinutes()+":"+today.getSeconds();
+  var dt_validade =dt_val.getFullYear()+"-"+(dt_val.getMonth()+1)+"-"+dt_val.getDate()+" "+dt_val.getHours()+":"+dt_val.getMinutes()+":"+dt_val.getSeconds();
+  $scope.cashback.validade = dt_val.getDate()+"-"+(dt_val.getMonth()+1)+"-"+dt_val.getFullYear();
+// Math.floor(Math.random() * 65536) - 32768;
+  var numero = Math.floor(Math.random() * 9999999);
   var letras = 'ABCDEFGHIJKLMNOPQRSTUVWXTZ';
   var aleatorio = '';
   for (var i = 0; i < 3 ; i++) {
       var rnum = Math.floor(Math.random() * letras.length);
       aleatorio += letras.substring(rnum, rnum + 1);
   }
-var a=("00000" + numero).slice(-5);
+  var numero_cupom = aleatorio + ("0000000" + numero).slice(-7);
+  var valores = {
+    parametros:'gerarCupom_cash',
+    idusuario:idUsuario,
+    data: dt,
+    data_hora : dt,
+    data_validade:dt_validade,
+    percentual_cliente :  $scope.listaCash[index].percentual_cliente ,
+    percentual_rede : $scope.listaCash[index].percentual_rede ,
+    percentual_total: $scope.listaCash[index].percentual_total,
+    idlojista:$scope.listaCash[index].idlojista,
+    status :"ABERTO",
+    idcashback:$scope.listaCash[index].idcashback,
+    numero_cupom:numero_cupom,
+    pagina:0
+  }
 
-  $scope.lojista={};
-  $scope.lojista.numero_cupom= (aleatorio+a);
-  $scope.lojista.idlojista= $scope.listaLojista[index].idlojista;
-  $scope.lojista.nome= $scope.listaLojista[index].nome;
-  $scope.lojista.telefone= $scope.listaLojista[index].telefone;
-  $scope.lojista.desconto_valor= $scope.listaLojista[index].desconto_valor;
-  $scope.lojista.desconto_percentual= $scope.listaLojista[index].desconto_percentual;
-  $scope.lojista.endereco= $scope.listaLojista[index].endereco;
-  $scope.lojista.titulo= $scope.listaLojista[index].titulo;
-  $scope.lojista.foto= $scope.listaLojista[index].foto;
-  $scope.lojista.descricao= $scope.listaLojista[index].descricao;
+  $http({
+        method:'POST',
+        url: path+'api/api.php',
+        data: valores,
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+      }).success(function(data){
+         $ionicLoading.hide();
+         if (data[0].idcupom_cashback!=null) {
 
-  $scope.tab_mostraCupom();
+           $scope.cashback.numero_cupom= numero_cupom;
+           $scope.cashback.idcashback= $scope.listaCash[index].idcashback;
+           $scope.cashback.nome= $scope.listaCash[index].nome;
+           $scope.cashback.telefone= $scope.listaCash[index].telefone;
+           $scope.cashback.percentual_cliente= $scope.listaCash[index].percentual_cliente;
+           $scope.cashback.titulo= $scope.listaCash[index].titulo;
+           $scope.cashback.descricao= $scope.listaCash[index].descricao;
+           $scope.cashback.foto= $scope.listaCash[index].foto;
+           $scope.tab_cashBack();
+         }
+         else {
+               $scope.showAlert('Atenção','vc já possui um cupom em aberto com a data de hoje para este Lojista, verifique seus cupons no menu lateral na opção Minha conta, meus cupons.');
+         }
+
+      });
+$ionicLoading.hide();
+}
+
+$scope.gerarCupom_desconto = function(index){
+$scope.desconto={};
+$ionicLoading.show({
+   template: 'Aguarde, gerando seu cupom...'
+ });
+
+ var valores = {
+   parametros:'pegaqtd_cupom',
+   iddesconto:$scope.listaDesconto[index].iddesconto,
+   pagina:0
+ }
+
+
+ $http({
+       method:'POST',
+       url: path+'api/api.php',
+       data: valores,
+       headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+     }).success(function(data){
+       $scope.desconto.qtd_disponivel= data[0].qtd_disponivel;
+
+        if (parseInt($scope.desconto.qtd_disponivel)>0){
+          //  qtd_disponivel: (parseInt($scope.listaDesconto[index].qtd_disponivel)-1),
+
+          var today = new Date();
+          var dt_val = new Date();
+          dt_val.setDate(today.getDate()+(parseInt($scope.listaDesconto[index].validade_dias)-1));
+          var dt =today.getFullYear()+"-"+(today.getMonth()+1)+"-"+today.getDate()+" "+today.getHours()+":"+today.getMinutes()+":"+today.getSeconds();
+          var dt_validade =dt_val.getFullYear()+"-"+(dt_val.getMonth()+1)+"-"+dt_val.getDate()+" "+dt_val.getHours()+":"+dt_val.getMinutes()+":"+dt_val.getSeconds();
+          $scope.desconto.validade = dt_val.getDate()+"-"+(dt_val.getMonth()+1)+"-"+dt_val.getFullYear();
+        // Math.floor(Math.random() * 65536) - 32768;
+          var numero = Math.floor(Math.random() * 9999999);
+          var letras = 'ABCDEFGHIJKLMNOPQRSTUVWXTZ';
+          var aleatorio = '';
+          for (var i = 0; i < 3 ; i++) {
+              var rnum = Math.floor(Math.random() * letras.length);
+              aleatorio += letras.substring(rnum, rnum + 1);
+          }
+          var numero_cupom = aleatorio + ("0000000" + numero).slice(-7);
+          var valores = {
+            parametros:'gerarCupom_desconto',
+            idusuario:idUsuario,
+            data: dt,
+            data_hora : dt,
+            data_validade:dt_validade,
+            valor_normal :  $scope.listaDesconto[index].valor_normal ,
+            valor_desconto : $scope.listaDesconto[index].valor_desconto ,
+            idlojista:$scope.listaDesconto[index].idlojista,
+            status :"ABERTO",
+            iddesconto:$scope.listaDesconto[index].iddesconto,
+            numero_cupom:numero_cupom,
+            pagina:0
+          }
+
+          // ok
+
+          $http({
+                method:'POST',
+                url: path+'api/api.php',
+                data: valores,
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+              }).success(function(data){
+
+                 $ionicLoading.hide();
+                 if (data[0].idcupom_desconto!=null) {
+
+                   $scope.desconto.numero_cupom= numero_cupom;
+                   $scope.desconto.iddesconto= $scope.listaDesconto[index].iddesconto;
+                   $scope.desconto.nome= $scope.listaDesconto[index].nome;
+                   $scope.desconto.telefone= $scope.listaDesconto[index].telefone;
+                   $scope.desconto.valor_normal= $scope.listaDesconto[index].valor_normal;
+                   $scope.desconto.valor_desconto= $scope.listaDesconto[index].valor_desconto;
+                   $scope.desconto.titulo= $scope.listaDesconto[index].titulo;
+                   $scope.desconto.descricao= $scope.listaDesconto[index].descricao;
+                   $scope.desconto.foto= $scope.listaDesconto[index].foto;
+
+                  // dar baixa na quantidade
+                  var valores = {
+                    parametros:'atualizaqtd_cupom',
+                    iddesconto:$scope.listaDesconto[index].iddesconto,
+                    qtd_disponivel:(parseInt($scope.desconto.qtd_disponivel)-1),
+                    pagina:0
+                  }
+                  $http({
+                        method:'POST',
+                        url: path+'api/api.php',
+                        data: valores,
+                        headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+                      }).success(function(data){
+      //                  $scope.qtd_disponivel = data[0].qtd_disponivel;
+                      });
+                   $scope.tab_Desconto();
+                 }
+                 else {
+                       $scope.showAlert('Atenção','vc já possui um cupom em aberto com a data de hoje para esta oferta, verifique seus cupons no menu lateral na opção Minha conta, meus cupons de desconto.');
+                 }
+
+              });
+        }
+        else {
+          $scope.showAlert('Atenção','Não existe mais cupons para esta oferta.');
+        }
+ });
+$ionicLoading.hide();
 }
 
 
@@ -191,167 +325,6 @@ $scope.verMeuAnuncio = function(index) {
 
 };
 
-
-$scope.comentarNotificacao = function(idmensagem, qtd, index) {
-  $scope.idmensagem=idmensagem;
-  $scope.qtdComentario=qtd;
-  $scope.index=index;
-  $scope.video= $scope.listaNotificacao[index].video;
-  $scope.foto=$scope.listaNotificacao[index].foto;
-  $scope.descricao=$scope.listaNotificacao[index].descricao;
-  $scope.data_hora=$scope.listaNotificacao[index].data_hora;
-  $scope.endereco=$scope.listaNotificacao[index].endereco;
-  $scope.assunto=$scope.listaNotificacao[index].assunto;
-  $scope.curtir=$scope.listaNotificacao[index].curtir;
-  $scope.comentario=$scope.listaNotificacao[index].comentario;
-  $scope.compartilhamento=$scope.listaNotificacao[index].compartilhamento;
- // $scope.listaNotificacao[index].status_label='{"background":"#F4FFF9"}';
-  $scope.pegaComentario();
-  $scope.modalcomentar.show();
-};
-
-
-
-//  colaborador
-$scope.pegaStatusColaborador = function(){
-
-var valores = {
-  parametros:'pegaStatusColaborador',
-  pagina:0
-
-}
-
-$http({
-      method:'POST',
-      url: path+'api/api.php',
-      data: valores,
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-    }).success(function(data){
-    $scope.listaColaborador = data;
-
-    });
-}
-
-
-$scope.paginacaoColaborador = function(){
-
-var valores = {
-  parametros:'pegaStatusColaborador',
-  pagina:$scope.listaColaborador.length
-
-}
-$scope.btn = false;
-
-if ($scope.listaColaborador.length>1){
-$http({
-      method:'POST',
-      url: path+'api/api.php',
-      data: valores,
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-    }).success(function(data){
-    if(data.length == 0){
-
-        $scope.btn = true;
-
-     }else{
-
-    $scope.listaColaborador = data;
-
-     }
-    $scope.$broadcast('scroll.infiniteScrollComplete');
-
-    }).error(function(data){
-    $scope.$broadcast('scroll.infiniteScrollComplete');
-
-    });
-
-}
-
-}
-
-
-$scope.pegaColeta = function(){
-var valores = {
-  parametros:'pegaColeta',
-  pagina:0,
-  idusuario:idUsuario
-}
-
-
-$ionicLoading.show({template: 'Carregando Mensagens...'});
-//console.log(valores);
-$http({
-      method:'POST',
-      url: path+'api/api.php',
-      data: valores,
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-    }).success(function(data){
-      $scope.listaColeta = [];
-      if (data.length>0){
-      for (var i = 0; i < data.length; i++) {
-
-          data[i].data_hora=new Date(data[i].data_hora);
-          $scope.listaColeta.push(angular.copy(data[i]));
-     };
-    }else
-    {
-
-    //  $scope.showAlert('Informação','Vc ainda não solicitou coleta...');
-    }
-
-    }); // fim httpm
-$ionicLoading.hide();
-
-}
-
-$scope.paginacaoColeta = function(){
-
-var valores = {
-  parametros:'pegaColeta',
-  pagina:$scope.listaColeta.length
-}
-       $ionicLoading.show({
-        template: 'Carregando feed de mensagens...'
-      });
-$scope.btn = false;
-
-if ($scope.lista.length>1){
-$http({
-      method:'POST',
-      url: path+'api/api.php',
-      data: valores,
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-    }).success(function(data){
-//      if ($scope.lista.length>0){
-    if(data.length == 0){
-
-        $scope.btn = true;
-
-     }else{
-
-      for (var i = 0; i < data.length; i++) {
-
-          data[i].data_hora=new Date(data[i].data_hora);
-
-         $scope.listaColeta.push(angular.copy(data[i]));
-
-//     };
-     }
-     }
-    $scope.$broadcast('scroll.infiniteScrollComplete');
-
-    }).error(function(data){
-    $scope.$broadcast('scroll.infiniteScrollComplete');
-
-    });
-
-}
-$ionicLoading.hide();
-
-}
-
-
-
 $scope.cameraPopup = function (){
     var confirm = $ionicPopup.alert({
       title: "Origem da Foto",
@@ -372,28 +345,6 @@ $scope.cameraPopup = function (){
              }]
     });
 };
-
-$scope.videoPopup = function (){
-    var confirm = $ionicPopup.alert({
-      title: "Origem do Vídeo",
-      body: "<i class='ion-camera'>Selecione o dispositivo</i>",
-      buttons: [{text: "Camêra",
-                 type: 'button-positive',
-                  onTap: function (){
-                    $scope.carregarVideo(1);
-                  },
-
-               },{text: "Galeria",
-                  type: 'button-positive',
-                  onTap: function (){
-                    $scope.carregarVideo(2);
-                  }
-
-
-             }]
-    });
-
-}
 
 $scope.cameraPopupPerfil = function (){
     var confirm = $ionicPopup.alert({
@@ -417,40 +368,6 @@ $scope.cameraPopupPerfil = function (){
 
 };
 
-/*  funcao para excluir mensagem */
-
-$scope.excluirMsg = function(id,index){
-var valores = {
-  parametros:'excluirMensagem',
-  idmensagem:id
-}
-   var confirmPopup = $ionicPopup.confirm({
-     title: 'Apagar',
-     template: 'Apaga a mensagem?'
-   });
-
-   confirmPopup.then(function(res) {
-     if(res) {
-$ionicLoading.show({template: 'Excluindo...'});
-
-$http({
-      method:'POST',
-      url: path+'api/api.php',
-      data: valores,
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-    }).success(function(data){
-      $ionicLoading.hide();
-	    $scope.listaUsuario.splice(index);
-      $scope.pegaStatusUsuario();
-    });
-     } else {
-    //   console.log('You are not sure');
-     }
-   });
-
-      $ionicLoading.hide();
-}
-
 $scope.pegaCategoria = function(){
 var valores = {
   parametros:'pegaCategoria',
@@ -465,6 +382,7 @@ var valores = {
           $scope.listaCategoria = data;
         });
 };
+
 $scope.pegaClassificado = function(){
 var valores = {
   parametros:'pegaClassificado',
@@ -479,6 +397,7 @@ var valores = {
           $scope.listaClassificado = data;
         });
 };
+
 $scope.pegaMeusClassificado = function(){
 var valores = {
   parametros:'pegaMeusClassificado',
@@ -496,9 +415,9 @@ var valores = {
         });
 };
 
-$scope.pegaLojista = function(){
+$scope.pegacashback = function(){
 var valores = {
-  parametros:'pegaLojista',
+  parametros:'pegaCashBack',
   pagina:0
 }
     $http({
@@ -507,15 +426,13 @@ var valores = {
           data: valores,
           headers: {'Content-Type': 'application/x-www-form-urlencoded'}
         }).success(function(data){
-          $scope.listaLojista = data;
+          $scope.listaCash = data;
         });
 };
 
-
-
-$scope.pegaColetor = function(){
+$scope.pegaDesconto = function(){
 var valores = {
-  parametros:'pegaColetor',
+  parametros:'pegaDesconto',
   pagina:0
 }
     $http({
@@ -524,26 +441,10 @@ var valores = {
           data: valores,
           headers: {'Content-Type': 'application/x-www-form-urlencoded'}
         }).success(function(data){
-          $scope.listaColetor = data;
-
+          $scope.listaDesconto = data;
         });
-
 };
 
-////  fim *********************
-
-$scope.convidaAmigos = function(){
- var link="https://play.google.com/store/apps/details?id=br.com.ics.socialmidia";
-
-    $cordovaContacts.find().then(function(allContacts) { //omitting parameter to .find() causes all contacts to be returned
-      $scope.contacts = allContacts;
-    //  console.log(allContacts);
-    });
-
-};
-
-
-// pegar status de postagem
 
 
 $scope.pegaStatus = function(){
@@ -581,45 +482,6 @@ $http({
     });
 $ionicLoading.hide();
 }
-
-
-$scope.pegaStatusUsuario = function(){
-var valores = {
-  parametros:'pegaStatusUsuario',
-  pagina:0,
-  idusuario:idUsuario
-}
-
-
-$ionicLoading.show({template: 'Carregando Mensagens...'});
-//console.log(valores);
-$http({
-      method:'POST',
-      url: path+'api/api.php',
-      data: valores,
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-    }).success(function(data){
-      $scope.listaUsuario = [];
-
-      if (data.length>0){
-      for (var i = 0; i < data.length; i++) {
-
-          data[i].data_hora=new Date(data[i].data_hora);
-          if (data[i].video!=""){
-            data[i].status_label="img/IconeVideo.png";
-          }
-      $scope.listaUsuario.push(angular.copy(data[i]));
-     };
-    }else
-    {
-//      $scope.showAlert('Informação','Vc ainda não postou mensagens...');
-    }
-
-    }); // fim httpm
-$ionicLoading.hide();
-
-}
-
 
 
 // recarregar o status de mensgens quado chegar ao final do scroll
@@ -690,67 +552,6 @@ $scope.mostraFoto = function(foto,titulo) {
    }
 };
 
-$scope.mudaTema = function(tema,tema2){
-  localStorage.setItem('tema',"bar-"+tema);
-  localStorage.setItem('tab_tema',"tabs-background-"+tema+" "+tema2);
-  localStorage.setItem('btn_tema',"button-"+tema);
-  $scope.tema=localStorage.getItem('tema');
-  $scope.tab_tema=localStorage.getItem('tab_tema');
-  $scope.btn_tema=localStorage.getItem('btn_tema');
-  $scope.showAlert('Informação','As mudanças seram aplicadas após reiniciar o app.');
-
-}
-
-$scope.pegaPapel = function(){
-
-    var options = {
-      quality: 100,
-      destinationType: Camera.DestinationType.DATA_URL,
-      sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
-      allowEdit: true,
-      encodingType: Camera.EncodingType.JPEG,
- //     targetWidth: 200,
- //     targetHeight: 200,
-      popoverOptions: CameraPopoverOptions,
-      saveToPhotoAlbum: true,
-      correctOrientation:true
-    };
-
-    $cordovaCamera.getPicture(options).then(function(imageData) {
-
-      var tempImg = new Image();
-      tempImg.src =  "data:image/jpeg;base64," + imageData;
-      tempImg.onload = function() {
-        var MAX_WIDTH = (tempImg.width*0.30);
-        var MAX_HEIGHT =(tempImg.height*0.30);
-        var tempW = tempImg.width;
-        var tempH = tempImg.height;
-        if (tempW > tempH) {
-           if (tempW > MAX_WIDTH) {
-              tempH *= MAX_WIDTH / tempW;
-              tempW = MAX_WIDTH;
-            }
-        } else {
-            if (tempH > MAX_HEIGHT) {
-               tempW *= MAX_HEIGHT / tempH;
-               tempH = MAX_HEIGHT;
-            }
-        }
-        var canvas = document.createElement('canvas');
-        canvas.width = tempW;
-        canvas.height = tempH;
-        var ctx = canvas.getContext("2d");
-        ctx.drawImage(this, 0, 0, tempW, tempH);
-        $scope.img_fundo = canvas.toDataURL("image/jpeg");
-        localStorage.setItem('img_fundo',"url("+$scope.img_fundo+")");
-        $scope.showAlert('Informação','As mudanças seram aplicadas após reiniciar o app.');
-        }
-
-    }, function(err) {
-
-    });
-
-}
 
 $scope.verificaUsuario = function (usuario){
 
@@ -855,9 +656,6 @@ $scope.gravaUsuario = function(usuario){
       idusuario:idUsuario
     }}
 
-  //  //console.log(path+'api/api.php');
-  console.log(valores);
-
     $http({
           method:'POST',
           url: path+'api/api.php',
@@ -906,278 +704,6 @@ $scope.gravaUsuario = function(usuario){
 
 
 }
-
-$scope.pegaBairro = function(){
-var valores = {
-  parametros:'pegaBairro',
-  pagina:0
-}
-    $http({
-          method:'POST',
-          url: path+'api/api.php',
-          data: valores,
-          headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-        }).success(function(data){
-          $scope.listaBairro = data;
-        });
-
-
-};
-//  menu lateral coleta de dados //
-$scope.pegaDuvida = function(){
-var valores = {
-  parametros:'pegaDuvida'
-}
-    $http({
-          method:'POST',
-          url: path+'api/api.php',
-          data: valores,
-          headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-        }).success(function(data){
-          $scope.listaDuvida = data;
-        });
-
-
-};
-
-
-$scope.pegaDica = function(){
-var valores = {
-  parametros:'pegaDica'
-}
-    $http({
-          method:'POST',
-          url: path+'api/api.php',
-          data: valores,
-          headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-        }).success(function(data){
-          $scope.listaDica = data;
-        });
-
-
-};
-
-
-
-
-/// fim
-
-
-$scope.pegaSocial = function(){
-var valores = {
-  parametros:'pegaSocial',
-  pagina:0
-}
-    $ionicLoading.show({template: 'Carregando Redes Sociais...'});
-    $http({
-          method:'POST',
-          url: path+'api/api.php',
-          data: valores,
-          headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-        }).success(function(data){
-          $scope.listaSocial = data;
-
-        });
-
-$ionicLoading.hide();
-
-};
-
-
-
-$scope.videoPlay =function(index) {
-      $scope.video();
-
-      document.getElementById("myvideo").innerHTML='<video id="Video" controls="controls" preload="metadata" autoplay="autoplay" webkit-playsinline="webkit-playsinline" poster ="gif/carregando05.gif" class="videoPlayer"><source src="'+$scope.listaVideo[index].link+'" type="video/mp4"/></video>';
-
-       $scope.titulo=$scope.listaVideo[index].titulo;
-
-       var video = document.getElementById("Video");
-       if (video.paused) {
-          video.play();
-      //    button.textContent = " ||";
-
-
-       } else {
-          video.pause();
-       //   button.textContent = " >";
-       }
-
-    };
-
-
-$scope.enviarVideo = function(formulario){
-
-      $ionicLoading.show({
-        template: 'Enviando...'
-      });
-
-    $scope.tipo=formulario.tipo;
-    $scope.endereco=formulario.endereco;
-    $scope.assunto=formulario.assunto;
-    $scope.descricao=formulario.descricao;
-    $scope.localizacao=formulario.localizacao;
-    $scope.status=formulario.status;
-
-    var today = new Date();
-    $scope.video_file ="vdo_file-"+today.getFullYear()+"-"+(today.getMonth()+1)+"-"+today.getDate()+"-"+today.getHours()+
-                     "-"+today.getMinutes()+"-"+today.getSeconds()+today.getMilliseconds()+".mp4";
-        /// ***** enviar video ******
-      $ionicLoading.show({
-        template: 'Enviando...'
-      });
-      $scope.video_file_path=path+"video/"+$scope.video_file;
-      $scope.currentPercentage=0;
-        var url = path+"uploadftp_video.php";
-        //File for Upload
-        var targetPath =$scope.video;
-        // File name only
-        var filename = $scope.video_file;
-        var options = {
-             fileKey: "file",
-             fileName: filename,
-             chunkedMode: false,
-             mimeType: "video/mp4",
-         params : {'directory':'upload', 'fileName':filename} // directory represents remote directory,  fileName represents final remote file name
-         };
-         $cordovaFileTransfer.upload(url, targetPath, options).then(function (result) {
-            // //console.log("SUCCESS: " + JSON.stringify(result.response));
-             $scope.gravarTexto();
-             $ionicLoading.hide();
-           //  $scope.videoForm.$setPristine();
-         }, function (err) {
-             $ionicLoading.hide();
-             $scope.showAlert("Erro ao Enviar Vídeo", JSON.stringify(err));
-         }, function (progress) {
-                 if (progress.lengthComputable) {
-                   var perc = Math.floor(progress.loaded / progress.total * 100);
-                   $scope.currentPercentage=perc;
-                }
-         });
-
-}
-
-$scope.enviarColeta = function(msg){
-
-    $ionicLoading.show({
-      template: 'Enviando...'
-    });
-
-
-    if (idUsuario!=""){
-    var today = new Date();
-    $scope.data=today.getFullYear()+"-"+(today.getMonth()+1)+"-"+today.getDate()+" "+today.getHours()+":"+today.getMinutes()+":"+today.getSeconds();
-
-    var valores = {
-      parametros:'gravarColeta',
-      idusuario:idUsuario,
-      idbairro:idBairro,
-      idcoletor:idColetor,
-      endereco:endereco,
-      data_hora:$scope.data,
-      localizacao:$scope.localizacao,
-      latitude:$scope.latitude,
-      longitude:$scope.longitude,
-      qtd_informada:msg.quantidade,
-      obs: msg.obs,
-      status:"Em Aberto"
-    }
-
-    $http({
-          method:'POST',
-          url: path+'api/api.php',
-          data: valores,
-          headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-        }).success(function(data){
-           $ionicLoading.hide();
-
-    //      $scope.showAlert('Informação','Sua mensagem foi enviada com sucesso!')
-           $scope.closemenu_coleta();
-            $scope.showAlert('Informação','Sua solicitação foi recebida com sucesso, Obrigado.');
-    //       $scope.limparDados();
-
-          $scope.pegaColeta();
-
-
-        }).error(function(data){
-           $ionicLoading.hide();
-           $scope.showAlert('Informação','erro ao enviar a mensagem, sem conexão com a internet.');
-
-        });
-     } else {
-           $scope.showAlert('Informação','Para vc mandar uma solicitação de coleta seletiva vc precisa primeiro se cadastrar no aplicativo. Se vc estiver tendo dificudades em fazer o cadatro entre em contato com o suporte pelo email: paulospcoelho@hotmail.com');
-
-     }
-
-};
-
-
-$scope.enviarTexto = function(formulario){
-
-      $ionicLoading.show({
-        template: 'Enviando...'
-      });
-
-      $scope.tipo=formulario.tipo;
-      $scope.endereco=formulario.endereco;
-      $scope.assunto=formulario.assunto;
-      $scope.descricao=formulario.descricao;
-      $scope.localizacao=formulario.localizacao;
-      $scope.status=formulario.status;
-      $scope.gravarTexto();
-//      $scope.msgForm.$setPristine();
-};
-
-$scope.enviarFoto = function(formulario){
-
-      $ionicLoading.show({
-        template: 'Enviando...'
-      });
-
-      $scope.currentPercentage=0;
-      $scope.tipo=formulario.tipo;
-      $scope.endereco=formulario.endereco;
-      $scope.assunto=formulario.assunto;
-      $scope.descricao=formulario.descricao;
-      $scope.localizacao=formulario.localizacao;
-      $scope.status=formulario.status;
-
-
-        $scope.dataURL = $scope.foto;
-        var today = new Date();
-        $scope.foto_file="img_file-"+today.getFullYear()+"-"+(today.getMonth()+1)+"-"+today.getDate()+"-"+today.getHours()+"-"+today.getMinutes()+"-"+today.getSeconds()+today.getMilliseconds()+".jpg";
-        $scope.foto_file_path=path+'foto/'+$scope.foto_file;
-       // enviar o arquivo compactado *******************************************
-
-        var url = path+"uploadftp_foto.php";
-        //File for Upload
-        var targetPath =$scope.dataURL;
-        // File name only
-        var filename = $scope.foto_file;
-        var options = {
-             fileKey: "file",
-             fileName: filename,
-             chunkedMode: false,
-             mimeType: "image/jpg",
-         params : {'directory':'upload', 'fileName':filename} // directory represents remote directory,  fileName represents final remote file name
-         };
-         $cordovaFileTransfer.upload(url, targetPath, options).then(function (result) {
-            // //console.log("SUCCESS: " + JSON.stringify(result.response));
-             $scope.gravarTexto();
-           //  $scope.fotoForm.$setPristine();
-
-         }, function (err) {
-             $ionicLoading.hide();
-             $scope.showAlert("Erro ao Enviar Imagem", JSON.stringify(err));
-         }, function (progress) {
-                 if (progress.lengthComputable) {
-                   var perc = Math.floor(progress.loaded / progress.total * 100);
-                   $scope.currentPercentage=perc;
-                }
-         });
-
-
-};
 
 $scope.enviarAnuncio = function(formulario){
 
@@ -1307,67 +833,6 @@ $scope.pegaLocal = function(){
 
 };
 
-
-$scope.gravarTexto = function(){
-if (idUsuario!=""){
-var today = new Date();
-$scope.data_hora=today.getFullYear()+"-"+(today.getMonth()+1)+"-"+today.getDate()+" "+today.getHours()+":"+today.getMinutes()+":"+today.getSeconds();
-if ($scope.endereco==null){
-  $scope.endereco=" ";
-}
-
-var valores = {
-  parametros:'gravarMensagem',
-  pagina:0,
-  tipo:$scope.assunto,
-  assunto:$scope.assunto,
-  descricao:$scope.descricao,
-  bairro:$scope.bairro,
-  endereco:$scope.endereco,
-  localizacao:$scope.localizacao,
-  latitude:$scope.latitude,
-  longitude:$scope.longitude,
-  idusuario:idUsuario,
-  idorgao:0,
-  area:"",
-  status:"Privada",
-  data_hora:$scope.data_hora,
-  foto:$scope.foto_file_path,
-  video:$scope.video_file_path
-
-}
-//console.log(valores);
-$http({
-      method:'POST',
-      url: path+'api/api.php',
-      data: valores,
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-    }).success(function(data){
-//       console.log(data);
-       $ionicLoading.hide();
-
-//      $scope.showAlert('Informação','Sua mensagem foi enviada com sucesso!')
-       $scope.closemenu_msg();
-//       $scope.limparDados();
-       $scope.foto_file_path="";
-       $scope.video_file_path="";
-       $scope.msgvideo={};
-       $scope.msgfoto={};
-       $scope.msgtexto={};
-       $scope.lista=[];
-       $scope.pegaStatus();
-       $scope.showAlert('Informação','Sua solicitação foi recebida e repassada para o setor responsável e será analizada! Obrigado por colaborar com nossa cidade.');
-
-    }).error(function(data){
-       $ionicLoading.hide();
-       $scope.showAlert('Informação','erro ao enviar a mensagem, sem conexão com a internet.');
-
-    });
- } else {
-       $scope.showAlert('Informação','Para vc mandar mensagens vc precisa primeiro se cadastrar no aplicativo. Se vc estiver tendo dificudades em fazer o cadatro entre em contato com o suporte pelo email: paulospcoelho@hotmail.com');
-
- }
-}
 
 $scope.limpaAnuncio = function(){
 
@@ -1636,100 +1101,6 @@ $scope.carregarFotoPerfil = function(opc){
 }
 
 
-$scope.carregarVideo = function(opc){
-  $scope.foto  =  " foto";
-  if (opc==1){
-
-  var opcoes =  { limit: 1, quality: 30, duration:60};
-
-    $cordovaCapture.captureVideo(options).then(function(videoData) {
-
-    var i, path, len;
-    for (i = 0, len = videoData.length; i < len; i += 1) {
-        path = videoData[i];
-       };
-
-      $scope.btnMsg = false;
-      $scope.msgVideo = true;
-      $scope.video=path.fullPath;
-      document.getElementById("myvideoPopup").innerHTML='<video style="height: 320px; width: 320px;" id="Video" controls="controls" preload="metadata" autoplay="autoplay" webkit-playsinline="webkit-playsinline" poster ="images/filmes_logo.jpg" class="videoPlayer"><source src="'+$scope.video+'" type="video/mp4"/></video>';
-
-
-
-      // Success! Video data is here
-    }, function(err) {
-       alert('erro ao carregar o vídeo');
-    });
-
-
-  }else{
-
-    var options ={ quality: 30,
-    destinationType: navigator.camera.DestinationType.FILE_URI, // retrona o path imageURI
-//    destinationType: navigator.camera.DestinationType.DATA_URL, // retrona o path imageURI
-    sourceType: navigator.camera.PictureSourceType.SAVEDPHOTOALBUM,
-    mediaType:1
-    };
-
-    $cordovaCamera.getPicture(options).then(function(imageData) {
-      $scope.btnMsg = false;
-      $scope.msgVideo = true;
-      /*
-      window.FilePath.resolveNativePath(imageData, successCallback, errorCallback);
-      function successCallback(file){
-           resize_vdo("file:"+file);
-      }
-      function errorCallback(err){
-        alert ('erro ao coneverter Path');
-      }
-
-
-      */
-
-      $scope.video=imageData;
-
-    }, function(err) {
-      alert('erro ao carregar o vídeo');
-
-    });
-
-    }
-
-
-}
-
-
-$scope.carregarTexto = function(){
-$scope.btnMsg = false;
-$scope.msgTexto = true;
-}
-
-$scope.limparDados = function(){
-  $scope.btnMsg = true;
-  $scope.msgFoto = false;
-  $scope.msgVideo = false;
-  $scope.msgTexto = false;
-  $scope.idorgao="0";
-  $scope.video="";
-  //$scope.foto="";
-  $scope.idmensagem="";
-  $scope.descricao="";
-  $scope.latitude="";
-  $scope.longitude="";
-  $scope.data_hora="";
-  $scope.endereco="";
-  $scope.status="";
-  $scope.bairro="";
- // $scope.tipo="";
-  $scope.area="";
-  $scope.status="";
-  $scope.foto_file="";
-  $scope.foto_file_path="";
-  $scope.video_file="";
-  $scope.video_file_path="";
-  $scope.currentPercentage=0;
-
-}
 
 //===========================================================================================
 $ionicModal.fromTemplateUrl('templates/tab-minhaconta.html', {
@@ -1756,35 +1127,62 @@ $scope.tab_minhaconta = function() {
   $scope.tabMinhaconta.show();
 };
 
+$ionicModal.fromTemplateUrl('templates/tab-redecash.html', {
+    scope: $scope
+  }).then(function(redecash) {
+    $scope.redecash = redecash;
+});
+
+$scope.closeredeCash = function() {
+    $scope.redecash.hide();
+};
+
+$scope.redeCash = function() {
+   $scope.pegacashback();
+   $scope.redecash.show();
+};
 $ionicModal.fromTemplateUrl('templates/tab-rededesconto.html', {
     scope: $scope
   }).then(function(rededesconto) {
     $scope.rededesconto = rededesconto;
 });
 
-$scope.closeredeDesconto = function() {
+$scope.closeredeDesconto= function() {
     $scope.rededesconto.hide();
 };
 
 $scope.redeDesconto = function() {
-   $scope.pegaLojista();
+   $scope.pegaDesconto();
    $scope.rededesconto.show();
 };
 
-$ionicModal.fromTemplateUrl('templates/tab-mostra-cupom.html', {
+$ionicModal.fromTemplateUrl('templates/tab-mostra-cupom-cash.html', {
     scope: $scope
-  }).then(function(mostracupom) {
-    $scope.mostracupom = mostracupom;
+  }).then(function(cashBack) {
+    $scope.cashBack = cashBack;
 });
 
-$scope.closemostraCupom = function() {
-    $scope.mostracupom.hide();
+$scope.closecashBack = function() {
+    $scope.cashBack.hide();
 };
 
-$scope.tab_mostraCupom = function() {
-   $scope.mostracupom.show();
+$scope.tab_cashBack = function() {
+   $scope.cashBack.show();
 };
 
+$ionicModal.fromTemplateUrl('templates/tab-mostra-cupom-desconto.html', {
+    scope: $scope
+  }).then(function(cupomdesconto) {
+    $scope.cupomdesconto = cupomdesconto;
+});
+
+$scope.closeDesconto = function() {
+    $scope.cupomdesconto.hide();
+};
+
+$scope.tab_Desconto = function() {
+   $scope.cupomdesconto.show();
+};
 
 
 $ionicModal.fromTemplateUrl('templates/menu-classificado.html', {
@@ -1807,19 +1205,19 @@ $scope.cad_classificado = function() {
 
 /**
 
-$ionicModal.fromTemplateUrl('templates/tab-lojista.html', {
+$ionicModal.fromTemplateUrl('templates/tab-cashback.html', {
   scope: $scope
-}).then(function(lojista) {
-  $scope.tablojista = lojista;
+}).then(function(cashback) {
+  $scope.tabcashback = cashback;
 });
 
 // Triggered in the login modal to close it
-$scope.close_Lojista = function() {
-  $scope.tabLojista.hide();
+$scope.close_cashback = function() {
+  $scope.tabcashback.hide();
 };
 // Open the login modal
-$scope.tab_Lojista = function() {
-  $scope.tabLojista.show();
+$scope.tab_cashback = function() {
+  $scope.tabcashback.show();
 };
 **/
 $ionicModal.fromTemplateUrl('templates/tab-meusanuncios.html', {

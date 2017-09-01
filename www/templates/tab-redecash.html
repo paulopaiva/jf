@@ -1,16 +1,12 @@
 <ion-modal-view>
-
-
   <ion-header-bar  ng-class="tema">
-
-    <button class="button button-clear icon-left ion-ios-arrow-thin-left" ng-click="closeredeDesconto()"></button>
-    <div class="h1 title">Rede de Desdontos</div>
-    <button class="button button-clear ion-android-share-alt"></button>
+    <button class="button button-clear icon-left ion-ios-arrow-thin-left" ng-click="closeredeCash()"></button>
+    <div class="h1 title">Rede CashBack</div>
   </ion-header-bar>
   <ion-content class="padding has-header components-demo" >
     <ion-refresher
       pulling-text="Refresh..."
-      on-refresh="pegaDesconto()">
+      on-refresh="pegacashBack()">
     </ion-refresher>
 
 
@@ -21,7 +17,7 @@
     </label>
    </div>
 
-  <div  class="list" ng-repeat="pega in listaDesconto | filter:criterioDeBusca" cache-view="false">
+  <div  class="list" ng-repeat="pega in listaCash | filter:criterioDeBusca" cache-view="false">
   <!-- <img class="full-image" src="images/play-in.png" ng-click="mostraVideo($index)" ng-show="{{pega.video}}"> ng-click="mostraFoto(pega.foto,pega.titulo)" -->
 
   <div class="list card" >
@@ -35,17 +31,12 @@
     <div class="item item-image">
       <img src="{{pega.foto}}">
     </div>
-    <a class="item item-icon-left assertive"  style="text-decoration: line-through;">
+    <a class="item item-icon-left assertive">
       <i class="icon ion-cash"></i>
-       Custa R${{pega.valor_normal}}
+       {{pega.percentual_cliente}}% de Takeback
     </a>
-    <a class="item item-icon-left positive">
-      <i class="icon ion-cash"></i>
-      Pague Apenas R${{pega.valor_desconto}}
-    </a>
-
-    <button class="button button-full button-energized" ng-click="gerarCupom_desconto($index)">
-      <i class="ion-ios-cart"></i> ({{pega.qtd_disponivel}}) Cupons Disponíveis
+    <button class="button button-full button-energized" ng-click="gerarCupom_cash($index)">
+      <i class="ion-ios-cart"></i> Gerar Cupom
     </button>
 
   </div>
